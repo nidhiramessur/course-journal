@@ -1,6 +1,6 @@
 # mns346
 
-
+This project uses the technologies mentioned in https://student.cs.uwaterloo.ca/~cs346/1239/getting-started/technologies/index.html
 
 ## Getting started
 
