@@ -16,7 +16,7 @@ _Optional, but often helpful to have a screenshot or demo-video for new users._
 
 
 ## Quick-Start Instructions
-_Instructions. Details on how to install and launch your application. _
+_Instructions. Details on how to install and launch your application._
 
 
 ## Project Documents
@@ -31,6 +31,8 @@ _Include a link to your Wiki pages, see below._
 
 ## Tools
 This project uses the technologies mentioned in https://student.cs.uwaterloo.ca/~cs346/1239/getting-started/technologies/index.html
+
+&nbsp; <!--- just extra space -->
 
 ***
 
