@@ -11,7 +11,7 @@
 # https://github.com/gradle/gradle
 
 
-image: openjdk:8-jdk
+image: openjdk:17-jdk
 
 variables:
   ANDROID_COMPILE_SDK: "28"
