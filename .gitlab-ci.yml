@@ -20,6 +20,7 @@ variables:
   CMAKE:               "3.10.2.4988404"
 
 before_script:
+  - sudo apt−get update
   - apt-get --quiet update --yes
   - apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1
   
