@@ -20,9 +20,9 @@ variables:
   CMAKE:               "3.10.2.4988404"
 
 before_script:
-  - sudo apt−get update
-  - apt-get --quiet update --yes
-  - apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1
+  # - sudo apt−get update
+  # - apt-get --quiet update --yes
+  # - apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1
   
   - wget --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-${ANDROID_SDK_TOOLS}.zip
   - unzip -d android-sdk-linux android-sdk.zip
@@ -42,6 +42,7 @@ before_script:
   - set -o pipefail
 
 build:
+  stage: build
   script:
     - ./gradlew assembleDebug
   artifacts:
@@ -49,14 +50,17 @@ build:
     - app/build/outputs/
 
 lint:
+  stage: test
   script:
     - ./gradlew -Pci --console=plain lintDebug -PbuildDir=lint
 
 unitTest:
+  stage: test
   script:
     - ./gradlew -Pci --console=plain testDebug
 
 instrumentationTest:
+  stage: test
   script:
     - echo y | android-sdk-linux/tools/bin/sdkmanager  "emulator" >/dev/null
     - echo y | android-sdk-linux/tools/bin/sdkmanager "system-images;android-${ANDROID_COMPILE_SDK};google_apis;x86"
