@@ -18,6 +18,13 @@ _Optional, but often helpful to have a screenshot or demo-video for new users._
 ## Quick-Start Instructions
 _Instructions. Details on how to install and launch your application._
 
+On Virtual device in Android studio:
+- Clone project and open it on Android Studio
+- On Android studio go to Build > Build Bundle(s) / APK(s) > Build APK(s)
+- A popup will appear on the bottom right > Click on locate > apk should be in debug folder
+- On Android studio go to Device Explorer on the right > sdcard > Download > Drag the apk there
+- On the virtual device, go to files > Downloads > Double click the apk > Update > Open
+
 
 ## Project Documents
 _Include a link to your Wiki pages, see below._
@@ -39,18 +46,6 @@ This project uses the technologies mentioned in https://student.cs.uwaterloo.ca/
 ***
 
 # Pre-existing notes by Gitlab (temporary)
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://git.uwaterloo.ca/m72ahmad/mns346.git
-git branch -M main
-git push -uf origin main
-```
 
 ## Integrate with your tools
 
