@@ -3,11 +3,15 @@ package com.example.cs346project
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
@@ -22,7 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 
@@ -50,92 +56,123 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
 @Composable
 fun CourseInput(courseData: CourseData) {
 
-    // Input field for course search
-    var courseCode by remember { mutableStateOf(courseData.courseCode) }
-    var isButtonClicked by remember { mutableStateOf(false) }
+    var courseCodeInput by remember { mutableStateOf(courseData.courseCode) }
+    var isPopupVisible by remember { mutableStateOf(false) }
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.SpaceAround
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         OutlinedTextField(
-            value = courseCode,
-            onValueChange = { courseCode = it },
-            label = { Text("Course Code") }
+            value = courseCodeInput,
+            onValueChange = { courseCodeInput = it },
+            label = { Text("Course Code") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
         )
 
         Button(
-            onClick = { isButtonClicked = true }
+            onClick = { isPopupVisible = true },
+            modifier = Modifier.padding(8.dp)
         ) {
-            Text("Search Course")
+            Text("Search course")
         }
 
-        if (isButtonClicked) {
-            CourseInfoDisplay(courseData)
+        if (isPopupVisible) {
+            Dialog(
+                onDismissRequest = { isPopupVisible = false }
+            ){
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(580.dp),
+                    shape = RoundedCornerShape(13.dp),
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        IconButton(
+                            onClick = { isPopupVisible = false },
+                            modifier = Modifier.align(Alignment.End)
+                        ) {
+                            Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
+                        }
+
+                        Text(
+                            text =  courseData.courseCode,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp,
+                            modifier = Modifier.padding(bottom = 20.dp),
+                            textAlign = TextAlign.Center
+                        )
+
+                        Text(
+                            text =  courseData.courseName,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            textAlign = TextAlign.Center
+                        )
+
+                        Text(
+                            text = courseData.lectureDays,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(16.dp),
+                            textAlign = TextAlign.Center
+                        )
+
+                        Text(
+                            text = courseData.lectureTimes,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(16.dp),
+                            textAlign = TextAlign.Center
+                        )
+
+                        // Input fields for instructor name and lecture location
+                        var instructorName by remember { mutableStateOf(courseData.instructorName) }
+                        var lectureLocation by remember { mutableStateOf(courseData.lectureLocation) }
+
+                        TextField(
+                            value = instructorName,
+                            onValueChange = { instructorName = it },
+                            label = { Text("Instructor name (optional)") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        )
+
+                        TextField(
+                            value = lectureLocation,
+                            onValueChange = { lectureLocation = it },
+                            label = { Text("Lecture location (optional)") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        )
+
+                        Button(
+                            onClick = { /* TODO */ },
+                            modifier = Modifier.padding(top = 16.dp)
+                        ) {
+                            Text("Add course")
+                        }
+                    }
+                }
+            }
         }
 
     }
 
 }
-
-@Composable
-fun CourseInfoDisplay(courseData: CourseData){
-    var isButtonClicked by remember { mutableStateOf(false) }
-
-    Dialog(
-        onDismissRequest = { isButtonClicked = true }
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-        ) {
-            // Close Button to close the pop up
-            IconButton(
-                onClick = { isButtonClicked = true },
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
-            }
-
-            // Course Info from API
-            Text(text = courseData.courseCode, fontSize = 24.sp)
-            Text(text = courseData.courseName, fontSize = 18.sp)
-            Text(text = "Lecture Days: ${courseData.lectureDays}")
-            Text(text = "Lecture Times: ${courseData.lectureTimes}")
-
-            // Input fields for instructor name and lecture location
-            var instructorName by remember { mutableStateOf(courseData.instructorName) }
-            var lectureLocation by remember { mutableStateOf(courseData.lectureLocation) }
-
-            TextField(
-                value = instructorName,
-                onValueChange = { instructorName = it },
-                label = { Text("Instructor Name") }
-            )
-
-            TextField(
-                value = lectureLocation,
-                onValueChange = { lectureLocation = it },
-                label = { Text("Lecture Location") }
-            )
-
-            // Add course button
-            Button(
-                onClick = { isButtonClicked = !isButtonClicked }
-            ) {
-                Text("Add Course")
-            }
-
-        }
-    }
-
-    if (isButtonClicked) {
-        // need to use nav controller instead
-    }
-}
-
-
