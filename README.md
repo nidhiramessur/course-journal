@@ -29,6 +29,8 @@ _Include a link to your Wiki pages, see below._
 ## Software Releases
 _Include a link to your Wiki pages, see below._
 
+- [Release notes Sprint 1](https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Release-notes-Sprint-1)
+
 ## Tools
 This project uses the technologies mentioned in https://student.cs.uwaterloo.ca/~cs346/1239/getting-started/technologies/index.html
 
