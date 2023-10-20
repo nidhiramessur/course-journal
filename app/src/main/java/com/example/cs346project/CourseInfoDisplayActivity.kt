@@ -1,5 +1,6 @@
 package com.example.cs346project
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -66,6 +69,16 @@ fun CourseInput(courseData: CourseData) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        val context = LocalContext.current
+        IconButton(
+            onClick = {
+                context.startActivity(Intent(context, HomepageActivity::class.java))
+            },
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Close")
+        }
 
         OutlinedTextField(
             value = courseCodeInput,

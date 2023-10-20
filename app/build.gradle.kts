@@ -49,6 +49,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
+    implementation ("androidx.navigation:navigation-compose:2.4.0-alpha01")
     implementation("androidx.activity:activity-compose:1.5.1")
     implementation("androidx.compose.material:material:1.5.3")
     implementation("androidx.compose.animation:animation:1.5.3")

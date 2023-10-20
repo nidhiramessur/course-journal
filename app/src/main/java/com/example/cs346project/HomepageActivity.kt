@@ -20,20 +20,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
-class MainActivity : AppCompatActivity() {
+class HomepageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent{
-            Welcome()
+            Homepage()
         }
+
     }
+
 }
 
 @Composable
-fun Welcome() {
+fun Homepage() {
     Text("Course Journal", color = Color.LightGray, fontSize = 40.sp,
         modifier = Modifier
             .fillMaxWidth()
@@ -43,13 +44,24 @@ fun Welcome() {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(120.dp), verticalArrangement = Arrangement.Center){
+            .padding(120.dp),
+        verticalArrangement = Arrangement.Bottom
+    ){
 
+        Button(onClick = { /*TODO*/ }) {
+            Text("Current Term")
+        }
+        Button(onClick = { /*TODO*/ }) {
+            Text("Search Term")
+        }
+        Button(onClick = { /*TODO*/ }) {
+            Text("  Add Term  ")
+        }
         val context = LocalContext.current
         Button(onClick = {
-            context.startActivity(Intent(context, UserSignupActivity::class.java))
+            context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
         }) {
-            Text("  Sign Up  ")
+            Text(" Add Course") // Temporary
         }
     }
 }
