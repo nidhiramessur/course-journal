@@ -32,14 +32,14 @@ before_script:
   # - echo y | android-sdk-linux/tools/bin/sdkmanager  "ndk-bundle" >/dev/null
   # - echo y | android-sdk-linux/tools/bin/sdkmanager  "cmake;${CMAKE}" >/dev/null
   
-  - export ANDROID_HOME=$PWD/android-sdk-linux/
-  - export CMAKE_HOME=$PWD/android-sdk-linux/cmake/${CMAKE}/bin/
-  - export PATH=$PATH:$PWD/android-sdk-linux/platform-tools/:$CMAKE_HOME
+  # - export ANDROID_HOME=$PWD/android-sdk-linux/
+  # - export CMAKE_HOME=$PWD/android-sdk-linux/cmake/${CMAKE}/bin/
+  # - export PATH=$PATH:$PWD/android-sdk-linux/platform-tools/:$CMAKE_HOME
 
-  - chmod +x ./gradlew
-  - set +o pipefail
-  - yes | android-sdk-linux/tools/bin/sdkmanager --licenses
-  - set -o pipefail
+  # - chmod +x ./gradlew
+  # - set +o pipefail
+  # - yes | android-sdk-linux/tools/bin/sdkmanager --licenses
+  # - set -o pipefail
 
 build:
   stage: build
