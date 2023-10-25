@@ -6,64 +6,20 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Gradle.gitlab-ci.yml
 
-# This is the Gradle build system for JVM applications
-# https://gradle.org/
-# https://github.com/gradle/gradle
-
-
-image: openjdk:17-jdk
-
-variables:
-  ANDROID_COMPILE_SDK: "28"
-  ANDROID_BUILD_TOOLS: "28.0.2"
-  ANDROID_SDK_TOOLS:   "4333796"
-  CMAKE:               "3.10.2.4988404"
-
+image: seanghay/android-ci
 before_script:
-  # - sudo apt−get update
-  # - apt-get --quiet update --yes
-  # - apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1
-  
-  - wget --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-${ANDROID_SDK_TOOLS}.zip
-  - unzip -d android-sdk-linux android-sdk.zip
-  # - echo y | android-sdk-linux/tools/bin/sdkmanager  "platforms;android-${ANDROID_COMPILE_SDK}" >/dev/null
-  # - echo y | android-sdk-linux/tools/bin/sdkmanager  "platform-tools" >/dev/null
-  # - echo y | android-sdk-linux/tools/bin/sdkmanager  "build-tools;${ANDROID_BUILD_TOOLS}" >/dev/null
-  # - echo y | android-sdk-linux/tools/bin/sdkmanager  "ndk-bundle" >/dev/null
-  # - echo y | android-sdk-linux/tools/bin/sdkmanager  "cmake;${CMAKE}" >/dev/null
-  
-  # - export ANDROID_HOME=$PWD/android-sdk-linux/
-  # - export CMAKE_HOME=$PWD/android-sdk-linux/cmake/${CMAKE}/bin/
-  # - export PATH=$PATH:$PWD/android-sdk-linux/platform-tools/:$CMAKE_HOME
-
-  # - chmod +x ./gradlew
-  # - set +o pipefail
-  # - yes | android-sdk-linux/tools/bin/sdkmanager --licenses
-  # - set -o pipefail
-
-build:
+  - chmod +x ./gradlew
+stages:
+  - build
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+assembleDebug:
   stage: build
   script:
     - ./gradlew assembleDebug
+    - cp app/build/outputs/apk/debug/app-debug.apk app-debug.apk
   artifacts:
     paths:
-    - app/build/outputs/
-
-lint:
-  stage: test
-  script:
-    - ./gradlew -Pci --console=plain lintDebug -PbuildDir=lint
-
-unitTest:
-  stage: test
-  script:
-    - ./gradlew -Pci --console=plain testDebug
-
-instrumentationTest:
-  stage: test
-  script:
-    - echo y | android-sdk-linux/tools/bin/sdkmanager  "emulator" >/dev/null
-    - echo y | android-sdk-linux/tools/bin/sdkmanager "system-images;android-${ANDROID_COMPILE_SDK};google_apis;x86"
-    - echo y | android-sdk-linux/tools/bin/avdmanager create avd -f -n testAVD -k "system-images;android-${ANDROID_COMPILE_SDK};google_apis;x86"
-    - android-sdk-linux/emulator/emulator -avd testAVD -no-audio -no-window &
-    - ./gradlew connectedAndroidTest
+      - app-debug.apk
