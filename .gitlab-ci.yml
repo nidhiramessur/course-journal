@@ -6,7 +6,8 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Gradle.gitlab-ci.yml
 
-image: seanghay/android-ci
+image: javiersantos/android-ci:latest
+
 before_script:
   - chmod +x ./gradlew
 stages:
