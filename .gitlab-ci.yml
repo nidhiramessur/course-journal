@@ -13,14 +13,19 @@ variables:
   ANDROID_BUILD_TOOLS: "34.0.0"
 
 before_script:
-  - echo "ANDROID_HOME is set to: $ANDROID_HOME"
   - chmod +x ./gradlew
 stages:
   - build
+  - print
 cache:
   paths:
     - .gradle/wrapper
     - .gradle/caches
+print:
+  stage: print
+  script:
+    - echo "ANDROID_HOME is set to: ${ANDROID_HOME}"
+
 assembleDebug:
   stage: build
   script:
