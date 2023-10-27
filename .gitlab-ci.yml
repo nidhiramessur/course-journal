@@ -24,7 +24,7 @@ cache:
 print:
   stage: print
   script:
-    - echo "ANDROID_HOME is set to: ${ANDROID_HOME}"
+    - echo "ANDROID_HOME is set to ${ANDROID_HOME}"
 
 assembleDebug:
   stage: build
