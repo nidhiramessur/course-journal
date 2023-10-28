@@ -6,5 +6,7 @@ data class CourseData(
     val lectureDays: String,
     val lectureTimes: String,
     val instructorName: String,
-    val lectureLocation: String
+    val lectureLocation: String,
+    val courseRating: Int,
+    val instructorRating: Int
 )

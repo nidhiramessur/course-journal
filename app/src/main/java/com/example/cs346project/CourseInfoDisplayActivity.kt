@@ -49,7 +49,9 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
                     lectureDays = "Monday, Wednesday, Friday",
                     lectureTimes = "9:00 AM - 10:30 AM",
                     instructorName = "Dr. Smith",
-                    lectureLocation = "Room 123"
+                    lectureLocation = "Room 123",
+                    courseRating = 0,
+                    instructorRating = 0
                 )
             )
         }
