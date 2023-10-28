@@ -60,8 +60,15 @@ fun CourseInfo(courseData: CourseData) {
             modifier = Modifier
                 .fillMaxWidth(),
             textAlign = TextAlign.Center)
+        Text("Course Rating: ${courseData.courseRating}/5", fontSize = 15.sp,
+            modifier = Modifier
+                .fillMaxWidth(),
+            textAlign = TextAlign.Center)
 
-        // can add complexity - it displays the lecture times and days that the student attends
+        // **can add complexity -
+        // it displays the lecture times and days that the student attends
+        // can make student choose lecture day/time when adding a course...
+
         Text(courseData.lectureDays, fontSize = 20.sp,
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,24 +86,30 @@ fun CourseInfo(courseData: CourseData) {
         Text("Instructor: ${courseData.instructorName}", fontSize = 20.sp,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(30.dp),
+                .padding(top = 30.dp),
+            textAlign = TextAlign.Center)
+        Text("Instructor Rating: ${courseData.instructorRating}/5", fontSize = 15.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 50.dp),
             textAlign = TextAlign.Center)
 
         val context = LocalContext.current
-        Button(onClick = {
-            context.startActivity(Intent(context, ToDoListActivity::class.java))
-        }) {
-            Text(" To-do list") // Temporary
+        Button(
+            onClick = {
+                context.startActivity(Intent(context, ToDoListActivity::class.java)) },
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Text(" To-do list")
         }
-        Button(onClick = { /*TODO*/ }) {
+        Button(
+            onClick = { /*TODO*/ },
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
             Text("Notes")
         }
 
-//        val context = LocalContext.current
-//        Button(onClick = {
-//            context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
-//        }) {
-//            Text(" Add Course") // Temporary
-//        }
     }
 }
