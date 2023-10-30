@@ -19,6 +19,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.auth.FirebaseAuth
+
 
 class HomepageActivity : AppCompatActivity() {
 
@@ -32,6 +34,8 @@ class HomepageActivity : AppCompatActivity() {
     }
 
 }
+
+
 
 @Composable
 fun Homepage() {
@@ -62,6 +66,14 @@ fun Homepage() {
             context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
         }) {
             Text(" Add Course") // Temporary
+        }
+        Button(onClick = {
+            // Log out the user
+            FirebaseAuth.getInstance().signOut()
+            // Navigate to the MainActivity
+            context.startActivity(Intent(context, MainActivity::class.java))
+        }) {
+            Text("Logout")
         }
     }
 }

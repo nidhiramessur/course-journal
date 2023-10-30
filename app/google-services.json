@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "547924566177",
+    "project_id": "cs346-app",
+    "storage_bucket": "cs346-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547924566177:android:19e88632f039acf4f590e0",
+        "android_client_info": {
+          "package_name": "com.example.cs346project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBAfVJE2-PFfnsiK06Mox9IzAejReihOQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
