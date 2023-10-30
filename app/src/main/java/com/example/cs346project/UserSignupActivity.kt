@@ -29,6 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.auth.FirebaseAuth
+import android.util.Log
 
 class UserSignupActivity: AppCompatActivity() {
 
@@ -125,9 +127,24 @@ fun UserSignupScreen() {
         )
 
         val context = LocalContext.current
+        val auth = FirebaseAuth.getInstance()
+
         Button(
             onClick = {
-                context.startActivity(Intent(context, HomepageActivity::class.java))
+                if (password == confirmPassword) {
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                context.startActivity(Intent(context, HomepageActivity::class.java))
+                            } else {
+                                // Handle failure (e.g., show an error message to the user)
+                                Log.w("FirebaseAuth", "createUserWithEmail:failure", task.exception)
+                            }
+                        }
+                } else {
+                    // Handle password mismatch
+                    Log.d("UserSignup", "Passwords do not match!")
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
