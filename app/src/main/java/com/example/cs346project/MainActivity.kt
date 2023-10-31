@@ -51,5 +51,11 @@ fun Welcome() {
         }) {
             Text("  Sign Up  ")
         }
+        Button(onClick = {
+            context.startActivity(Intent(context, UserSignInActivity::class.java))
+        }) {
+            Text("  Sign In  ")
+        }
     }
 }
+
