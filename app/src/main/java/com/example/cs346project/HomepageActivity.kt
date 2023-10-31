@@ -65,8 +65,15 @@ fun Homepage() {
         Button(onClick = {
             context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
         }) {
-            Text(" Add Course") // Temporary
+            Text("Add Course") // Temporary (Needs to be in term page)
         }
+
+        Button(onClick = {
+            context.startActivity(Intent(context, CourseManagementActivity::class.java))
+        }) {
+            Text(" CS101 ") // Temporary (Needs to be in term page)
+        }
+
         Button(onClick = {
             // Log out the user
             FirebaseAuth.getInstance().signOut()

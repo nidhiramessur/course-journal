@@ -10,7 +10,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +57,16 @@ fun CourseInfo(courseData: CourseData) {
             .padding(horizontal = 20.dp, vertical = 50.dp),
         verticalArrangement = Arrangement.Top
     ){
+        val context = LocalContext.current
+        IconButton(
+            onClick = {
+                context.startActivity(Intent(context, HomepageActivity::class.java))
+            },
+            modifier = Modifier.align(Alignment.Start)
+        ) {
+            Icon(imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = "Close")
+        }
+
         Text(courseData.courseCode, fontSize = 30.sp,
             modifier = Modifier
                 .fillMaxWidth(),
@@ -94,7 +109,6 @@ fun CourseInfo(courseData: CourseData) {
                 .padding(bottom = 50.dp),
             textAlign = TextAlign.Center)
 
-        val context = LocalContext.current
         Button(
             onClick = {
                 context.startActivity(Intent(context, ToDoListActivity::class.java)) },
