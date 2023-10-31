@@ -21,6 +21,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,7 +50,9 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
                     lectureDays = "Monday, Wednesday, Friday",
                     lectureTimes = "9:00 AM - 10:30 AM",
                     instructorName = "Dr. Smith",
-                    lectureLocation = "Room 123"
+                    lectureLocation = "Room 123",
+                    courseRating = 0,
+                    instructorRating = 0
                 )
             )
         }
@@ -75,9 +78,9 @@ fun CourseInput(courseData: CourseData) {
             onClick = {
                 context.startActivity(Intent(context, HomepageActivity::class.java))
             },
-            modifier = Modifier.align(Alignment.End)
+            modifier = Modifier.align(Alignment.Start)
         ) {
-            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Close")
+            Icon(imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = "Close")
         }
 
         OutlinedTextField(
