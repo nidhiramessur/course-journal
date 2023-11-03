@@ -63,7 +63,7 @@ fun Homepage() {
         }
         val context = LocalContext.current
         Button(onClick = {
-            context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
+            context.startActivity(Intent(context, UserFetchTermCoursesActivity::class.java))
         }) {
             Text("Add Course") // Temporary (Needs to be in term page)
         }
