@@ -73,6 +73,11 @@ fun Homepage() {
         }) {
             Text(" CS101 ") // Temporary (Needs to be in term page)
         }
+        Button(onClick = {
+            context.startActivity(Intent(context, UserFetchTermCoursesActivity::class.java))
+        }) {
+            Text("Demo Backend") // Temporary (Needs to be in term page)
+        }
 
         Button(onClick = {
             // Log out the user
