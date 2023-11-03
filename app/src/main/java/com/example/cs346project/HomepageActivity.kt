@@ -63,7 +63,7 @@ fun Homepage() {
         }
         val context = LocalContext.current
         Button(onClick = {
-            context.startActivity(Intent(context, UserFetchTermCoursesActivity::class.java))
+            context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
         }) {
             Text("Add Course") // Temporary (Needs to be in term page)
         }
@@ -72,6 +72,11 @@ fun Homepage() {
             context.startActivity(Intent(context, CourseManagementActivity::class.java))
         }) {
             Text(" CS101 ") // Temporary (Needs to be in term page)
+        }
+        Button(onClick = {
+            context.startActivity(Intent(context, UserFetchTermCoursesActivity::class.java))
+        }) {
+            Text("Demo Backend") // Temporary (Needs to be in term page)
         }
 
         Button(onClick = {
