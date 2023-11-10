@@ -19,10 +19,10 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 class CourseInfoDisplayActivity : AppCompatActivity() {
@@ -64,6 +65,11 @@ fun CourseInput(courseData: CourseData) {
 
     var courseCodeInput by remember { mutableStateOf(courseData.courseCode) }
     var isPopupVisible by remember { mutableStateOf(false) }
+    val viewModel: CourseInfoViewModel = viewModel()
+    
+    LaunchedEffect(Unit, block = {
+        viewModel.getCourseInfoDatas()
+    })
 
     Column(
         modifier = Modifier
@@ -124,21 +130,37 @@ fun CourseInput(courseData: CourseData) {
                             Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
                         }
 
-                        Text(
-                            text =  courseData.courseCode,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 30.sp,
-                            modifier = Modifier.padding(bottom = 20.dp),
-                            textAlign = TextAlign.Center
-                        )
+                        if (viewModel.errorMessage.isEmpty()) {
+                            val specificCourse = viewModel.courseInfo.find { it.title == "Application Development" }
 
-                        Text(
-                            text =  courseData.courseName,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 18.sp,
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            textAlign = TextAlign.Center
-                        )
+                            if (specificCourse != null) {
+                                Text(
+                                    text =  "${specificCourse.subjectCode} ${specificCourse.catalogNumber}",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 30.sp,
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    text =  specificCourse.title,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 20.sp,
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                    textAlign = TextAlign.Center
+                                )
+//                                Text(
+//                                    text =  specificCourse.description,
+//                                    fontWeight = FontWeight.Normal,
+//                                    fontSize = 18.sp,
+//                                    modifier = Modifier.padding(horizontal = 16.dp),
+//                                    textAlign = TextAlign.Center
+//                                )
+                            } else {
+                                Text(text = "Course not found")
+                            }
+                        } else {
+                            Text(text = viewModel.errorMessage)
+                        }
+
 
                         Text(
                             text = courseData.lectureDays,
