@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import java.util.Date
 
 
 class CourseInfoDisplayActivity : AppCompatActivity() {
@@ -63,12 +64,17 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
 @Composable
 fun CourseInput(courseData: CourseData) {
 
-    var courseCodeInput by remember { mutableStateOf(courseData.courseCode) }
+    var subject by remember { mutableStateOf("") }
+    var courseNumber by remember { mutableStateOf("") }
     var isPopupVisible by remember { mutableStateOf(false) }
     val viewModel: CourseInfoViewModel = viewModel()
     
     LaunchedEffect(Unit, block = {
-        viewModel.getCourseInfoDatas()
+        viewModel.getCourseInfoSomeData()
+    })
+
+    LaunchedEffect(Unit, block = {
+        viewModel.getCourseInfoAPIData()
     })
 
     Column(
@@ -90,9 +96,21 @@ fun CourseInput(courseData: CourseData) {
         }
 
         OutlinedTextField(
-            value = courseCodeInput,
-            onValueChange = { courseCodeInput = it },
-            label = { Text("Course Code") },
+            value = subject,
+            onValueChange = { subject = it },
+            placeholder = { Text("e.g CS, BIOL etc") },
+            label = { Text("Subject") },
+            singleLine = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
+        )
+
+        OutlinedTextField(
+            value = courseNumber,
+            onValueChange = { courseNumber = it },
+            label = { Text("Course Number") },
+            placeholder = { Text("e.g 100, 201, 346 etc") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
@@ -131,7 +149,7 @@ fun CourseInput(courseData: CourseData) {
                         }
 
                         if (viewModel.errorMessage.isEmpty()) {
-                            val specificCourse = viewModel.courseInfo.find { it.title == "Application Development" }
+                            val specificCourse = viewModel.courseInfo.find { it.subjectCode == subject && it.catalogNumber == courseNumber }
 
                             if (specificCourse != null) {
                                 Text(
@@ -143,17 +161,47 @@ fun CourseInput(courseData: CourseData) {
                                 Text(
                                     text =  specificCourse.title,
                                     fontWeight = FontWeight.SemiBold,
-                                    fontSize = 20.sp,
+                                    fontSize = 22.sp,
                                     modifier = Modifier.padding(horizontal = 16.dp),
                                     textAlign = TextAlign.Center
                                 )
-//                                Text(
-//                                    text =  specificCourse.description,
-//                                    fontWeight = FontWeight.Normal,
-//                                    fontSize = 18.sp,
-//                                    modifier = Modifier.padding(horizontal = 16.dp),
-//                                    textAlign = TextAlign.Center
-//                                )
+                                Text(
+                                    text =  specificCourse.requirementsDescription,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 15.sp,
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                    textAlign = TextAlign.Center
+                                )
+
+                                val courseID = specificCourse.courseID
+//                                val specificCourseLectureInfo = viewModel.courseAPIInfo.find { it.courseId == courseID }
+
+                                // Assuming you have an instance of CourseInfoData named courseInfoData
+//                                val firstScheduleData: ScheduleData? = specificCourseLectureInfo?.scheduleData?.get(0)
+
+
+                                // Accessing classMeetingStartTime if it exists
+//                                val classMeetingStartTime: Date? = firstScheduleData?.classMeetingStartTime
+
+//                                if (specificCourseLectureInfo != null) {
+//                                    Text(
+//                                        text = classMeetingStartTime.toString(),
+//                                        fontWeight = FontWeight.Normal,
+//                                        fontSize = 18.sp,
+//                                        modifier = Modifier.padding(16.dp),
+//                                        textAlign = TextAlign.Center
+//                                    )
+//
+//                                    Text(
+//                                        text = courseData.lectureTimes,
+//                                        fontWeight = FontWeight.Normal,
+//                                        fontSize = 18.sp,
+//                                        modifier = Modifier.padding(16.dp),
+//                                        textAlign = TextAlign.Center
+//                                    )
+//                                } else {
+//                                    Text(text = viewModel.apiErrorMessage)
+//                                }
                             } else {
                                 Text(text = "Course not found")
                             }
@@ -162,21 +210,21 @@ fun CourseInput(courseData: CourseData) {
                         }
 
 
-                        Text(
-                            text = courseData.lectureDays,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 18.sp,
-                            modifier = Modifier.padding(16.dp),
-                            textAlign = TextAlign.Center
-                        )
-
-                        Text(
-                            text = courseData.lectureTimes,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 18.sp,
-                            modifier = Modifier.padding(16.dp),
-                            textAlign = TextAlign.Center
-                        )
+//                        Text(
+//                            text = courseData.lectureDays,
+//                            fontWeight = FontWeight.Normal,
+//                            fontSize = 18.sp,
+//                            modifier = Modifier.padding(16.dp),
+//                            textAlign = TextAlign.Center
+//                        )
+//
+//                        Text(
+//                            text = courseData.lectureTimes,
+//                            fontWeight = FontWeight.Normal,
+//                            fontSize = 18.sp,
+//                            modifier = Modifier.padding(16.dp),
+//                            textAlign = TextAlign.Center
+//                        )
 
                         // Input fields for instructor name and lecture location
                         var instructorName by remember { mutableStateOf(courseData.instructorName) }
