@@ -79,7 +79,8 @@ fun CourseInput(courseData: CourseData) {
     var courseNumber by remember { mutableStateOf("") }
     var isPopupVisible by remember { mutableStateOf(false) }
     val viewModel: CourseInfoViewModel = viewModel()
-    
+
+    // Launch API requests
     LaunchedEffect(Unit, block = {
         viewModel.getCourseInfoAPIData()
     })
@@ -96,6 +97,7 @@ fun CourseInput(courseData: CourseData) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        // Course search fields and button
         val context = LocalContext.current
         IconButton(
             onClick = {
@@ -134,6 +136,7 @@ fun CourseInput(courseData: CourseData) {
             Text("Search course")
         }
 
+        // Pop up that appears when a course is searched
         if (isPopupVisible) {
             Dialog(
                 onDismissRequest = { isPopupVisible = false }
@@ -159,6 +162,7 @@ fun CourseInput(courseData: CourseData) {
                             Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
                         }
 
+                        // Course info from UW Open API
                         if (viewModel.errorMessage.isEmpty()) {
                             val specificCourse = viewModel.courseInfo.find { it.subjectCode == subject && it.catalogNumber == courseNumber }
 
@@ -187,6 +191,7 @@ fun CourseInput(courseData: CourseData) {
                                 var lastCourseComponent: String? = null
                                 var lastLectureDay: String? = null
 
+                                // Class Schedule info from UW Open API
                                 viewModel.classScheduleInfo.forEach { specificCourseLectureInfo ->
                                     if (specificCourseLectureInfo.courseId == courseID) {
                                         val scheduleData = specificCourseLectureInfo.scheduleData[0]
@@ -203,30 +208,27 @@ fun CourseInput(courseData: CourseData) {
 
                                         val courseComponent = specificCourseLectureInfo.courseComponent
 
+                                        // Display course component once if it repeats
                                         if (courseComponent != lastCourseComponent) {
-                                            // Display the course component only when it changes
                                             Text(
                                                 text = "$courseComponent:",
                                                 fontWeight = FontWeight.SemiBold,
                                                 fontSize = 18.sp,
                                                 textAlign = TextAlign.Left
                                             )
-                                            // Update the last displayed course component
                                             lastCourseComponent = courseComponent
                                         }
 
+                                        // Display lecture day once if it repeats and corresponding lecture times
                                         if (lectureDays != lastLectureDay) {
-                                            // Display the lecture day and time
                                             Text(
                                                 text = "$lectureDays:",
                                                 fontWeight = FontWeight.Normal,
                                                 fontSize = 18.sp,
                                                 textAlign = TextAlign.Center
                                             )
-                                            // Update the last displayed course lecture day
                                             lastLectureDay = lectureDays
                                         }
-
                                         Text(
                                             text = "$startTimeWithoutSeconds - $endTimeWithoutSeconds",
                                             fontWeight = FontWeight.Normal,
@@ -266,6 +268,7 @@ fun CourseInput(courseData: CourseData) {
                                 .padding(16.dp)
                         )
 
+                        // Button to add a course
                         Button(
                             onClick = { /* TODO */ },
                             modifier = Modifier.padding(top = 16.dp)
