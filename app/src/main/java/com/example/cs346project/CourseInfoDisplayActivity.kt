@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
@@ -91,7 +92,7 @@ fun CourseInput(courseData: CourseData) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -112,7 +113,7 @@ fun CourseInput(courseData: CourseData) {
             label = { Text("Subject") },
             singleLine = true,
             modifier = Modifier
-                .fillMaxWidth()
+                .width(320.dp)
                 .padding(bottom = 16.dp)
         )
 
@@ -122,7 +123,7 @@ fun CourseInput(courseData: CourseData) {
             label = { Text("Course Number") },
             placeholder = { Text("e.g 100, 201, 346 etc") },
             modifier = Modifier
-                .fillMaxWidth()
+                .width(320.dp)
                 .padding(bottom = 16.dp)
         )
 
@@ -146,7 +147,7 @@ fun CourseInput(courseData: CourseData) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(20.dp),
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -172,44 +173,69 @@ fun CourseInput(courseData: CourseData) {
                                     text =  specificCourse.title,
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = 22.sp,
-                                    modifier = Modifier.padding(horizontal = 16.dp),
                                     textAlign = TextAlign.Center
                                 )
                                 Text(
                                     text =  specificCourse.requirementsDescription,
                                     fontWeight = FontWeight.Normal,
                                     fontSize = 15.sp,
-                                    modifier = Modifier.padding(horizontal = 16.dp),
                                     textAlign = TextAlign.Center
                                 )
 
                                 val courseID = specificCourse.courseId
 
-                                val specificCourseLectureInfo = viewModel.classScheduleInfo.find { it.courseId == courseID }
+                                var lastCourseComponent: String? = null
+                                var lastLectureDay: String? = null
 
-                                if (specificCourseLectureInfo != null) {
-                                    val scheduleData = specificCourseLectureInfo.scheduleData[0]
+                                viewModel.classScheduleInfo.forEach { specificCourseLectureInfo ->
+                                    if (specificCourseLectureInfo.courseId == courseID) {
+                                        val scheduleData = specificCourseLectureInfo.scheduleData[0]
+                                        val classMeetingDayPatternCode = scheduleData.classMeetingDayPatternCode
+                                        val lectureDays = mapDayCodeToDayName(classMeetingDayPatternCode)
 
-                                    val classMeetingDayPatternCode = scheduleData.classMeetingDayPatternCode
-                                    val lectureDays = mapDayCodeToDayName(classMeetingDayPatternCode)
+                                        val classMeetingStartTime = scheduleData.classMeetingStartTime
+                                        val startTime = classMeetingStartTime.split("T")[1]
+                                        val startTimeWithoutSeconds = startTime.substring(0, 5)
 
-                                    val classMeetingStartTime = scheduleData.classMeetingStartTime
-                                    val startTime = classMeetingStartTime.split("T")[1]
-                                    val startTimeWithoutSeconds = startTime.substring(0,5)
+                                        val classMeetingEndTime = scheduleData.classMeetingEndTime
+                                        val endTime = classMeetingEndTime.split("T")[1]
+                                        val endTimeWithoutSeconds = endTime.substring(0, 5)
 
-                                    val classMeetingEndTime = scheduleData.classMeetingEndTime
-                                    val endTime = classMeetingEndTime.split("T")[1]
-                                    val endTimeWithoutSeconds = endTime.substring(0,5)
+                                        val courseComponent = specificCourseLectureInfo.courseComponent
 
-                                    Text(
-                                        text = "$lectureDays: $startTimeWithoutSeconds-$endTimeWithoutSeconds",
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontSize = 18.sp,
-                                        modifier = Modifier.padding(16.dp),
-                                        textAlign = TextAlign.Center
-                                    )
-                                } else {
-                                    Text(text = viewModel.apiErrorMessage)
+                                        if (courseComponent != lastCourseComponent) {
+                                            // Display the course component only when it changes
+                                            Text(
+                                                text = "$courseComponent:",
+                                                fontWeight = FontWeight.SemiBold,
+                                                fontSize = 18.sp,
+                                                textAlign = TextAlign.Left
+                                            )
+                                            // Update the last displayed course component
+                                            lastCourseComponent = courseComponent
+                                        }
+
+                                        if (lectureDays != lastLectureDay) {
+                                            // Display the lecture day and time
+                                            Text(
+                                                text = "$lectureDays:",
+                                                fontWeight = FontWeight.Normal,
+                                                fontSize = 18.sp,
+                                                textAlign = TextAlign.Center
+                                            )
+                                            // Update the last displayed course lecture day
+                                            lastLectureDay = lectureDays
+                                        }
+
+                                        Text(
+                                            text = "$startTimeWithoutSeconds - $endTimeWithoutSeconds",
+                                            fontWeight = FontWeight.Normal,
+                                            fontSize = 18.sp,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    } else {
+                                        Text(text = viewModel.apiErrorMessage)
+                                    }
                                 }
                             } else {
                                 Text(text = "Course not found")
