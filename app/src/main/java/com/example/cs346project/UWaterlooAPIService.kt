@@ -10,10 +10,10 @@ const val BASE_URL = "https://openapi.data.uwaterloo.ca/v3/"
 interface APIService {
 
     @GET("Courses/1239")
-    suspend fun getCourseInfoDataFromGET(): List<CourseInfoData>
+    suspend fun getCourseInfo(): List<CourseInfoData>
 
     @GET("ClassSchedules/1239/cs/346")
-    suspend fun getCourseInfoAPIDataFromGET(): List<CourseInfoAPIData>
+    suspend fun getClassScheduleInfo(): List<ClassScheduleData>
 
     companion object {
         private val okHttpClient = OkHttpClient.Builder()

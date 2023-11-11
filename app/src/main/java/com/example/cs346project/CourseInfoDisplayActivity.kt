@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
-import java.util.Date
 
 
 class CourseInfoDisplayActivity : AppCompatActivity() {
@@ -61,6 +60,17 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
     }
 }
 
+fun mapDayCodeToDayName(dayCode: String): String {
+    return when (dayCode) {
+        "M" -> "Mondays"
+        "T" -> "Tuesdays"
+        "W" -> "Wednesdays"
+        "R" -> "Thursdays"
+        "F" -> "Fridays"
+        else -> "Unknown"
+    }
+}
+
 @Composable
 fun CourseInput(courseData: CourseData) {
 
@@ -70,11 +80,11 @@ fun CourseInput(courseData: CourseData) {
     val viewModel: CourseInfoViewModel = viewModel()
     
     LaunchedEffect(Unit, block = {
-        viewModel.getCourseInfoSomeData()
+        viewModel.getCourseInfoAPIData()
     })
 
     LaunchedEffect(Unit, block = {
-        viewModel.getCourseInfoAPIData()
+        viewModel.getClassScheduleInfoAPIData()
     })
 
     Column(
@@ -173,58 +183,40 @@ fun CourseInput(courseData: CourseData) {
                                     textAlign = TextAlign.Center
                                 )
 
-                                val courseID = specificCourse.courseID
-//                                val specificCourseLectureInfo = viewModel.courseAPIInfo.find { it.courseId == courseID }
+                                val courseID = specificCourse.courseId
 
-                                // Assuming you have an instance of CourseInfoData named courseInfoData
-//                                val firstScheduleData: ScheduleData? = specificCourseLectureInfo?.scheduleData?.get(0)
+                                val specificCourseLectureInfo = viewModel.classScheduleInfo.find { it.courseId == courseID }
 
+                                if (specificCourseLectureInfo != null) {
+                                    val scheduleData = specificCourseLectureInfo.scheduleData[0]
 
-                                // Accessing classMeetingStartTime if it exists
-//                                val classMeetingStartTime: Date? = firstScheduleData?.classMeetingStartTime
+                                    val classMeetingDayPatternCode = scheduleData.classMeetingDayPatternCode
+                                    val lectureDays = mapDayCodeToDayName(classMeetingDayPatternCode)
 
-//                                if (specificCourseLectureInfo != null) {
-//                                    Text(
-//                                        text = classMeetingStartTime.toString(),
-//                                        fontWeight = FontWeight.Normal,
-//                                        fontSize = 18.sp,
-//                                        modifier = Modifier.padding(16.dp),
-//                                        textAlign = TextAlign.Center
-//                                    )
-//
-//                                    Text(
-//                                        text = courseData.lectureTimes,
-//                                        fontWeight = FontWeight.Normal,
-//                                        fontSize = 18.sp,
-//                                        modifier = Modifier.padding(16.dp),
-//                                        textAlign = TextAlign.Center
-//                                    )
-//                                } else {
-//                                    Text(text = viewModel.apiErrorMessage)
-//                                }
+                                    val classMeetingStartTime = scheduleData.classMeetingStartTime
+                                    val startTime = classMeetingStartTime.split("T")[1]
+                                    val startTimeWithoutSeconds = startTime.substring(0,5)
+
+                                    val classMeetingEndTime = scheduleData.classMeetingEndTime
+                                    val endTime = classMeetingEndTime.split("T")[1]
+                                    val endTimeWithoutSeconds = endTime.substring(0,5)
+
+                                    Text(
+                                        text = "$lectureDays: $startTimeWithoutSeconds-$endTimeWithoutSeconds",
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 18.sp,
+                                        modifier = Modifier.padding(16.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                } else {
+                                    Text(text = viewModel.apiErrorMessage)
+                                }
                             } else {
                                 Text(text = "Course not found")
                             }
                         } else {
                             Text(text = viewModel.errorMessage)
                         }
-
-
-//                        Text(
-//                            text = courseData.lectureDays,
-//                            fontWeight = FontWeight.Normal,
-//                            fontSize = 18.sp,
-//                            modifier = Modifier.padding(16.dp),
-//                            textAlign = TextAlign.Center
-//                        )
-//
-//                        Text(
-//                            text = courseData.lectureTimes,
-//                            fontWeight = FontWeight.Normal,
-//                            fontSize = 18.sp,
-//                            modifier = Modifier.padding(16.dp),
-//                            textAlign = TextAlign.Center
-//                        )
 
                         // Input fields for instructor name and lecture location
                         var instructorName by remember { mutableStateOf(courseData.instructorName) }
