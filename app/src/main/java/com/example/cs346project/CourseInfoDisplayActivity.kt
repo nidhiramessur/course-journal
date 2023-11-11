@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -150,7 +152,8 @@ fun CourseInput(courseData: CourseData) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp),
+                            .padding(16.dp)
+                            .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -183,6 +186,8 @@ fun CourseInput(courseData: CourseData) {
                                     text =  specificCourse.requirementsDescription,
                                     fontWeight = FontWeight.Normal,
                                     fontSize = 15.sp,
+                                    modifier = Modifier
+                                        .padding(bottom = 16.dp),
                                     textAlign = TextAlign.Center
                                 )
 
