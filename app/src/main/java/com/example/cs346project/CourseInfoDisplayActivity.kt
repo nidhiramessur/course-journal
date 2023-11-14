@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
@@ -63,15 +64,22 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
     }
 }
 
-fun mapDayCodeToDayName(dayCode: String): String {
-    return when (dayCode) {
-        "M" -> "Mondays"
-        "T" -> "Tuesdays"
-        "W" -> "Wednesdays"
-        "R" -> "Thursdays"
-        "F" -> "Fridays"
-        else -> "Unknown"
+fun mapDayCodeToDayNames(dayCode: String): List<String> {
+    val dayNames = mutableListOf<String>()
+
+    for (char in dayCode) {
+        val dayName = when (char) {
+            'M' -> "Mondays"
+            'T' -> "Tuesdays"
+            'W' -> "Wednesdays"
+            'R' -> "Thursdays"
+            'F' -> "Fridays"
+            else -> "Unknown"
+        }
+        dayNames.add(dayName)
     }
+
+    return dayNames
 }
 
 @Composable
@@ -81,15 +89,7 @@ fun CourseInput(courseData: CourseData) {
     var courseNumber by remember { mutableStateOf("") }
     var isPopupVisible by remember { mutableStateOf(false) }
     val viewModel: CourseInfoViewModel = viewModel()
-
-    // Launch API requests
-    LaunchedEffect(Unit, block = {
-        viewModel.getCourseInfoAPIData()
-    })
-
-    LaunchedEffect(Unit, block = {
-        viewModel.getClassScheduleInfoAPIData()
-    })
+    var isLoading by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -165,9 +165,22 @@ fun CourseInput(courseData: CourseData) {
                             Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
                         }
 
-                        // Course info from UW Open API
+
+                        LaunchedEffect(Unit, block = {
+                            isLoading = true
+                            viewModel.getCourseInfoAPIData()
+                            viewModel.getClassScheduleInfoAPIData(subject, courseNumber)
+                            isLoading = false
+                        })
+
+                        // Display loading indicator if the API call is in progress
+                        if (isLoading) {
+                            CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                        }
+
+                        // Display course info from UW Open API if available
                         if (viewModel.errorMessage.isEmpty()) {
-                            val specificCourse = viewModel.courseInfo.find { it.subjectCode == subject && it.catalogNumber == courseNumber }
+                            val specificCourse = viewModel.courseInfo.find { it.subjectCode == subject.uppercase() && it.catalogNumber == courseNumber }
 
                             if (specificCourse != null) {
                                 Text(
@@ -194,14 +207,19 @@ fun CourseInput(courseData: CourseData) {
                                 val courseID = specificCourse.courseId
 
                                 var lastCourseComponent: String? = null
-                                var lastLectureDay: String? = null
+                                var lastLectureDay: List<String>? = null
 
-                                // Class Schedule info from UW Open API
-                                viewModel.classScheduleInfo.forEach { specificCourseLectureInfo ->
+                                val specificCourseLectureInfoAPI = viewModel.classScheduleInfo
+                                // Display class Schedule info from UW Open API
+                                for (specificCourseLectureInfo in specificCourseLectureInfoAPI) {
                                     if (specificCourseLectureInfo.courseId == courseID) {
                                         val scheduleData = specificCourseLectureInfo.scheduleData[0]
                                         val classMeetingDayPatternCode = scheduleData.classMeetingDayPatternCode
-                                        val lectureDays = mapDayCodeToDayName(classMeetingDayPatternCode)
+                                        if (classMeetingDayPatternCode.isEmpty()) {
+                                            Text(text = "Course schedule not found")
+                                            break
+                                        }
+                                        val lectureDays = mapDayCodeToDayNames(classMeetingDayPatternCode)
 
                                         val classMeetingStartTime = scheduleData.classMeetingStartTime
                                         val startTime = classMeetingStartTime.split("T")[1]
@@ -227,7 +245,7 @@ fun CourseInput(courseData: CourseData) {
                                         // Display lecture day once if it repeats and corresponding lecture times
                                         if (lectureDays != lastLectureDay) {
                                             Text(
-                                                text = "$lectureDays:",
+                                                text = "${lectureDays.joinToString(", ")}:",
                                                 fontWeight = FontWeight.Normal,
                                                 fontSize = 18.sp,
                                                 textAlign = TextAlign.Center
@@ -241,14 +259,16 @@ fun CourseInput(courseData: CourseData) {
                                             textAlign = TextAlign.Center
                                         )
                                     } else {
-                                        Text(text = viewModel.apiErrorMessage)
+                                        Text(text = "Course schedule not found")
                                     }
                                 }
                             } else {
-                                Text(text = "Course not found")
+                                if (!isLoading) {
+                                    Text(text = "Course not found")
+                                }
                             }
                         } else {
-                            Text(text = viewModel.errorMessage)
+                            Text(text = "error fetching API data: ${viewModel.errorMessage}")
                         }
 
                         // Input fields for instructor name and lecture location

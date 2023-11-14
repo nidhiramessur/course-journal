@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 const val BASE_URL = "https://openapi.data.uwaterloo.ca/v3/"
 
@@ -12,8 +13,11 @@ interface APIService {
     @GET("Courses/1239")
     suspend fun getCourseInfo(): List<CourseInfoData>
 
-    @GET("ClassSchedules/1239/cs/346")
-    suspend fun getClassScheduleInfo(): List<ClassScheduleData>
+    @GET("ClassSchedules/1239/{subject}/{courseNumber}")
+    suspend fun getClassScheduleInfo(
+        @Path("subject") subject: String,
+        @Path("courseNumber") courseNumber: String
+    ): List<ClassScheduleData>
 
     companion object {
         private val okHttpClient = OkHttpClient.Builder()

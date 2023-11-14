@@ -17,8 +17,11 @@ class CourseInfoViewModel : ViewModel() {
 
     private var _classScheduleInfo = mutableListOf<ClassScheduleData>()
     var apiErrorMessage: String by mutableStateOf("")
-    val classScheduleInfo: MutableList<ClassScheduleData>
+    var classScheduleInfo: MutableList<ClassScheduleData>
         get() = _classScheduleInfo
+        set(value) {
+            _classScheduleInfo = value
+        }
 
     suspend fun getCourseInfoAPIData() {
         try {
@@ -33,17 +36,17 @@ class CourseInfoViewModel : ViewModel() {
         }
     }
 
-    suspend fun getClassScheduleInfoAPIData() {
+    suspend fun getClassScheduleInfoAPIData(subject: String, courseNumber: String) {
         try {
             withContext(Dispatchers.IO) {
-                Log.d("API_REQUEST 2", "Before API call")
-                val response = APIService.apiService.getClassScheduleInfo()
+                Log.d("API_REQUEST 2", "Before API call $subject $courseNumber")
+                val response = APIService.apiService.getClassScheduleInfo(subject.lowercase(), courseNumber)
                 // Log the raw JSON response
-                Log.d("RAW_JSON_RESPONSE 2", response.toString())
+                Log.d("CLASS SCHEDULE 2", classScheduleInfo.toString())
 
                 // Convert the response to a mutable list
                 _classScheduleInfo = response.toMutableList()
-                Log.d("JSON_RESPONSE 2", classScheduleInfo.toString())
+                Log.d("CLASS SCHEDULE 2", classScheduleInfo.toString())
             }
         } catch (e: Exception) {
             Log.e("API_REQUEST 2", "Error: ${e.message}")
