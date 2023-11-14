@@ -72,10 +72,6 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
         }
     }
 
-    fun setCurrentTermUUID(currentTermUUID: String) {
-        currentCourseUUID = currentTermUUID
-    }
-
     @Composable
     fun CourseInput(courseData: CourseData) {
 
