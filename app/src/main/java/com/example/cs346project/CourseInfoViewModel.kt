@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class CourseInfoViewModel : ViewModel() {
@@ -28,6 +29,7 @@ class CourseInfoViewModel : ViewModel() {
             withContext(Dispatchers.IO) {
                 Log.d("API_REQUEST 1", "Before API call")
                 _courseInfo = APIService.apiService.getCourseInfo().toMutableList()
+                delay(1000)
                 Log.d("JSON_RESPONSE 1", courseInfo.toString())
             }
         } catch (e: Exception) {
@@ -41,6 +43,7 @@ class CourseInfoViewModel : ViewModel() {
             withContext(Dispatchers.IO) {
                 Log.d("API_REQUEST 2", "Before API call $subject $courseNumber")
                 val response = APIService.apiService.getClassScheduleInfo(subject.lowercase(), courseNumber)
+                delay(1000)
                 // Log the raw JSON response
                 Log.d("CLASS SCHEDULE 2", classScheduleInfo.toString())
 

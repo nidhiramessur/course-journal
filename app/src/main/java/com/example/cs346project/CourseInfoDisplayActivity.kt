@@ -57,23 +57,12 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent{
-            CourseInput(
-                courseData = CourseData(
-                    courseCode = "CS101",
-                    courseName = "Introduction to Computer Science",
-                    lectureDays = "Monday, Wednesday, Friday",
-                    lectureTimes = "9:00 AM - 10:30 AM",
-                    instructorName = "Dr. Smith",
-                    lectureLocation = "Room 123",
-                    courseRating = 0,
-                    instructorRating = 0
-                )
-            )
+            CourseInput()
         }
     }
 
     @Composable
-    fun CourseInput(courseData: CourseData) {
+    fun CourseInput() {
 
         var subject by remember { mutableStateOf("") }
         var courseNumber by remember { mutableStateOf("") }
@@ -262,8 +251,8 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
                             }
 
                             // Input fields for instructor name and lecture location
-                            var instructorName by remember { mutableStateOf(courseData.instructorName) }
-                            var lectureLocation by remember { mutableStateOf(courseData.lectureLocation) }
+                            var instructorName by remember { mutableStateOf("") }
+                            var lectureLocation by remember { mutableStateOf("") }
 
                             TextField(
                                 value = instructorName,
