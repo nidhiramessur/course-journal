@@ -147,7 +147,7 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
 
                             LaunchedEffect(Unit, block = {
                                 isLoading = true
-                                viewModel.getCourseInfoAPIData()
+                                viewModel.getCourseInfoAPIData(subject, courseNumber)
                                 viewModel.getClassScheduleInfoAPIData(subject, courseNumber)
                                 isLoading = false
                             })
@@ -159,95 +159,96 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
 
                             // Display course info from UW Open API if available
                             if (viewModel.errorMessage.isEmpty()) {
-                                val specificCourse = viewModel.courseInfo.find { it.subjectCode == subject.uppercase() && it.catalogNumber == courseNumber }
+                                if (viewModel.courseInfo.isNotEmpty()) {
+                                    val specificCourse = viewModel.courseInfo.find { it.subjectCode == subject.uppercase() && it.catalogNumber == courseNumber }
 
-                                if (specificCourse != null) {
-                                    Text(
-                                        text =  "${specificCourse.subjectCode} ${specificCourse.catalogNumber}",
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 30.sp,
-                                        textAlign = TextAlign.Center
-                                    )
-                                    Text(
-                                        text =  specificCourse.title,
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontSize = 22.sp,
-                                        textAlign = TextAlign.Center
-                                    )
-                                    Text(
-                                        text =  specificCourse.requirementsDescription,
-                                        fontWeight = FontWeight.Normal,
-                                        fontSize = 15.sp,
-                                        modifier = Modifier
-                                            .padding(bottom = 16.dp),
-                                        textAlign = TextAlign.Center
-                                    )
-
-                                    val courseID = specificCourse.courseId
-
-                                    var lastCourseComponent: String? = null
-                                    var lastLectureDay: List<String>? = null
-
-                                    val specificCourseLectureInfoAPI = viewModel.classScheduleInfo
-                                    // Display class Schedule info from UW Open API
-                                    for (specificCourseLectureInfo in specificCourseLectureInfoAPI) {
-                                        if (specificCourseLectureInfo.courseId == courseID) {
-                                            val scheduleData = specificCourseLectureInfo.scheduleData[0]
-                                            val classMeetingDayPatternCode = scheduleData.classMeetingDayPatternCode
-                                            if (classMeetingDayPatternCode.isEmpty()) {
-                                                Text(text = "Course schedule not found")
-                                                break
-                                            }
-                                            val lectureDays = mapDayCodeToDayNames(classMeetingDayPatternCode)
-
-                                            val classMeetingStartTime = scheduleData.classMeetingStartTime
-                                            val startTime = classMeetingStartTime.split("T")[1]
-                                            val startTimeWithoutSeconds = startTime.substring(0, 5)
-
-                                            val classMeetingEndTime = scheduleData.classMeetingEndTime
-                                            val endTime = classMeetingEndTime.split("T")[1]
-                                            val endTimeWithoutSeconds = endTime.substring(0, 5)
-
-                                            val courseComponent = specificCourseLectureInfo.courseComponent
-
-                                            // Display course component once if it repeats
-                                            if (courseComponent != lastCourseComponent) {
-                                                Text(
-                                                    text = "$courseComponent:",
-                                                    fontWeight = FontWeight.SemiBold,
-                                                    fontSize = 18.sp,
-                                                    textAlign = TextAlign.Left
-                                                )
-                                                lastCourseComponent = courseComponent
-                                            }
-
-                                            // Display lecture day once if it repeats and corresponding lecture times
-                                            if (lectureDays != lastLectureDay) {
-                                                Text(
-                                                    text = "${lectureDays.joinToString(", ")}:",
-                                                    fontWeight = FontWeight.Normal,
-                                                    fontSize = 18.sp,
-                                                    textAlign = TextAlign.Center
-                                                )
-                                                lastLectureDay = lectureDays
-                                            }
+                                    if (specificCourse != null) {
+                                        Text(
+                                            text =  "${specificCourse.subjectCode} ${specificCourse.catalogNumber}",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 30.sp,
+                                            textAlign = TextAlign.Center
+                                        )
+                                        Text(
+                                            text =  specificCourse.title,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 22.sp,
+                                            textAlign = TextAlign.Center
+                                        )
+                                        if (specificCourse.requirementsDescription != null) { // this is needed
                                             Text(
-                                                text = "$startTimeWithoutSeconds - $endTimeWithoutSeconds",
+                                                text =  specificCourse.requirementsDescription,
                                                 fontWeight = FontWeight.Normal,
-                                                fontSize = 18.sp,
+                                                fontSize = 15.sp,
+                                                modifier = Modifier
+                                                    .padding(bottom = 16.dp),
                                                 textAlign = TextAlign.Center
                                             )
+                                        }
+
+                                        val courseID = specificCourse.courseId
+
+                                        // Display class Schedule info from UW Open API
+                                        if (viewModel.apiErrorMessage.isEmpty()) {
+                                            if (viewModel.classScheduleInfo.isNotEmpty()) {
+                                                val specificCourseLectureInfoAPI = viewModel.classScheduleInfo
+                                                for (specificCourseLectureInfo in specificCourseLectureInfoAPI) {
+                                                    if (specificCourseLectureInfo.courseId == courseID) {
+                                                        if (specificCourseLectureInfo.scheduleData.isEmpty()) {
+                                                            Text(text = "Course schedule not found")
+                                                            break
+                                                        }
+                                                        val scheduleData = specificCourseLectureInfo.scheduleData[0]
+                                                        val classMeetingDayPatternCode = scheduleData.classMeetingDayPatternCode
+                                                        if (classMeetingDayPatternCode.isNullOrEmpty()) { // this is needed
+                                                            Text(text = "Course schedule not found")
+                                                            break
+                                                        }
+                                                        val lectureDays = mapDayCodeToDayNames(classMeetingDayPatternCode)
+
+                                                        val classMeetingStartTime = scheduleData.classMeetingStartTime
+                                                        if (classMeetingStartTime.isNullOrEmpty()) { // this is needed
+                                                            Text(text = "Course schedule not found")
+                                                            break
+                                                        }
+                                                        val startTime = classMeetingStartTime.split("T")[1]
+                                                        val startTimeWithoutSeconds = startTime.substring(0, 5)
+
+                                                        val classMeetingEndTime = scheduleData.classMeetingEndTime
+                                                        if (classMeetingEndTime.isNullOrEmpty()) { // this is needed
+                                                            Text(text = "Course schedule not found")
+                                                            break
+                                                        }
+                                                        val endTime = classMeetingEndTime.split("T")[1]
+                                                        val endTimeWithoutSeconds = endTime.substring(0, 5)
+
+                                                        val courseComponent = specificCourseLectureInfo.courseComponent
+                                                        if (courseComponent.isNullOrEmpty()) { // this is needed
+                                                            Text(text = "Course schedule not found")
+                                                            break
+                                                        }
+                                                        Text(
+                                                            text = "$courseComponent: ${lectureDays.joinToString(", ")}: $startTimeWithoutSeconds - $endTimeWithoutSeconds",
+                                                            fontWeight = FontWeight.Normal,
+                                                            fontSize = 18.sp,
+                                                            textAlign = TextAlign.Left
+                                                        )
+                                                    } else {
+                                                        Text(text = "Course schedule not found")
+                                                    }
+                                                }
+                                            } else {
+                                                Text(text = "Course schedule not found")
+                                            }
                                         } else {
                                             Text(text = "Course schedule not found")
                                         }
                                     }
                                 } else {
-                                    if (!isLoading) {
-                                        Text(text = "Course not found")
-                                    }
+                                    Text(text = "Course not found")
                                 }
                             } else {
-                                Text(text = "error fetching API data: ${viewModel.errorMessage}")
+                                Text(text = "Course not found")
                             }
 
                             // Input fields for instructor name and lecture location

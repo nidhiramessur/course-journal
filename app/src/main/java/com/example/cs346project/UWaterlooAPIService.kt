@@ -10,8 +10,11 @@ const val BASE_URL = "https://openapi.data.uwaterloo.ca/v3/"
 
 interface APIService {
 
-    @GET("Courses/1239")
-    suspend fun getCourseInfo(): List<CourseInfoData>
+    @GET("Courses/1239/{subject}/{courseNumber}")
+    suspend fun getCourseInfo(
+        @Path("subject") subject: String,
+        @Path("courseNumber") courseNumber: String
+    ): List<CourseInfoData>
 
     @GET("ClassSchedules/1239/{subject}/{courseNumber}")
     suspend fun getClassScheduleInfo(

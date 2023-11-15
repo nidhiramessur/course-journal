@@ -24,11 +24,11 @@ class CourseInfoViewModel : ViewModel() {
             _classScheduleInfo = value
         }
 
-    suspend fun getCourseInfoAPIData() {
+    suspend fun getCourseInfoAPIData(subject: String, courseNumber: String) {
         try {
             withContext(Dispatchers.IO) {
                 Log.d("API_REQUEST 1", "Before API call")
-                _courseInfo = APIService.apiService.getCourseInfo().toMutableList()
+                _courseInfo = APIService.apiService.getCourseInfo(subject.lowercase(), courseNumber).toMutableList()
                 delay(1000)
                 Log.d("JSON_RESPONSE 1", courseInfo.toString())
             }
