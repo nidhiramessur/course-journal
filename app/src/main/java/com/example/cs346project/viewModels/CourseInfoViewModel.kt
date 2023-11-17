@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.cs346project.APIService
 import com.example.cs346project.ClassScheduleData
-import com.example.cs346project.CourseInfoData
+import com.example.cs346project.CourseInfoAPIData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -17,9 +17,9 @@ import java.util.UUID
 
 class CourseInfoViewModel : ViewModel() {
 
-    private var _courseInfo = mutableListOf<CourseInfoData>()
+    private var _courseInfo = mutableListOf<CourseInfoAPIData>()
     var errorMessage: String by mutableStateOf("")
-    val courseInfo: MutableList<CourseInfoData>
+    val courseInfo: MutableList<CourseInfoAPIData>
         get() = _courseInfo
 
     private var _classScheduleInfo = mutableListOf<ClassScheduleData>()
