@@ -78,7 +78,11 @@ fun Homepage() {
         }) {
             Text("Demo Backend") // Temporary (Needs to be in term page)
         }
-
+        Button(onClick = {
+            context.startActivity(Intent(context, CurrentTermActivity::class.java))
+        }) {
+            Text("Current Term")
+        }
         Button(onClick = {
             // Log out the user
             FirebaseAuth.getInstance().signOut()
