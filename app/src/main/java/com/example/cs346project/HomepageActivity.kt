@@ -53,9 +53,6 @@ fun Homepage() {
     ){
 
         Button(onClick = { /*TODO*/ }) {
-            Text("Current Term")
-        }
-        Button(onClick = { /*TODO*/ }) {
             Text("Search Term")
         }
         Button(onClick = { /*TODO*/ }) {
@@ -71,7 +68,7 @@ fun Homepage() {
         Button(onClick = {
             context.startActivity(Intent(context, CourseManagementActivity::class.java))
         }) {
-            Text(" CS101 ") // Temporary (Needs to be in term page)
+            Text(" CS346 ") // Temporary (Needs to be in term page)
         }
         Button(onClick = {
             context.startActivity(Intent(context, UserFetchTermCoursesActivity::class.java))

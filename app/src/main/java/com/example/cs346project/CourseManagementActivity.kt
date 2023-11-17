@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -21,6 +22,10 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -50,9 +55,12 @@ fun CourseInfo() {
     val courseInfoState = viewModel.courseInfoState.collectAsState()
     val termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05"
     val courseUUID = "3cd879a8-247c-4978-ad2c-e963bfe583d1"
+    var isLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = termUUID, key2 = courseUUID) {
+        isLoading = true
         viewModel.fetchCourseInfo(termUUID, courseUUID)
+        isLoading = false
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally,
@@ -71,6 +79,11 @@ fun CourseInfo() {
             modifier = Modifier.align(Alignment.Start)
         ) {
             Icon(imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = "Close")
+        }
+
+        // Display loading indicator if the call is in progress
+        if (isLoading) {
+            CircularProgressIndicator(modifier = Modifier.padding(16.dp))
         }
 
         val courseDBData = courseInfoState.value.firstOrNull()
