@@ -8,9 +8,12 @@ import androidx.lifecycle.ViewModel
 import com.example.cs346project.APIService
 import com.example.cs346project.ClassScheduleData
 import com.example.cs346project.CourseInfoData
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 class CourseInfoViewModel : ViewModel() {
 
@@ -60,5 +63,53 @@ class CourseInfoViewModel : ViewModel() {
         }
     }
 
+    fun addCourse(
+        courseName: String,
+        lectureLocation: String,
+        lectureDateTime: String,
+        instructorName: String,
+        title: String,
+        requirements: String
+    ) {
+        // Temporarily hardcoding the term UUID - "Fall 2023" in db (user test4)
+        // Every course added will go under the Fall 2023 term for user test4
+        val currentTermUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05"
+
+        // Real functionality is when the user is on the term page and clicks on add course
+        // it will navigate to this activity where the user can search for their course
+        // and add the course to the term page
+        // workflow: user signs in, goes to term page, clicks on add course, gets navigated to this page
+        // in the "add course" button on the term page, it should setCurrentTermUUID
+        // and we can get rid of the above line
+
+        val courseUUID = UUID.randomUUID().toString()
+//        val currentCourseUUID = courseUUID
+
+        val db = FirebaseFirestore.getInstance()
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.let {
+            val courseMap = hashMapOf(
+                "UUID" to courseUUID,
+                "lecturedatetime" to lectureDateTime,
+                "lecturelocation" to lectureLocation,
+                "name" to courseName,
+                "title" to title,
+                "requirements" to requirements,
+                "notes" to listOf<String>(),
+                "professorname" to instructorName,
+                "todo" to listOf<String>()
+            )
+
+            db.collection("Users").document(it.uid)
+                .collection("Terms").document(currentTermUUID)
+                .collection("Courses").document(courseUUID)
+                .set(courseMap)
+                .addOnSuccessListener {
+                }
+                .addOnFailureListener { e ->
+                    Log.w("Firestore", "Error adding course document", e)
+                }
+        }
+    }
 
 }
