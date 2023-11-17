@@ -1,10 +1,13 @@
-package com.example.cs346project
+package com.example.cs346project.viewModels
 
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.cs346project.APIService
+import com.example.cs346project.ClassScheduleData
+import com.example.cs346project.CourseInfoData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
