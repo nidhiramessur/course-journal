@@ -2,6 +2,7 @@ package com.example.cs346project
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
@@ -64,7 +65,7 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
         var lectureDateTime = ""
         var title = ""
         var requirements = ""
-        val lectureDateTimeList = mutableListOf<String>()
+        val lectureDateTimeSet = mutableSetOf<String>()
 
         Column(
             modifier = Modifier
@@ -234,8 +235,12 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
                                                             fontSize = 18.sp,
                                                             textAlign = TextAlign.Left
                                                         )
-                                                        lectureDateTime = lectureDays.joinToString(", ") + startTimeWithoutSeconds + "-" + endTimeWithoutSeconds
-                                                        lectureDateTimeList.add(lectureDateTime)
+                                                        lectureDateTime = courseComponent + ": " + lectureDays.joinToString(", ") + startTimeWithoutSeconds + "-" + endTimeWithoutSeconds
+                                                        if (lectureDateTime !in lectureDateTimeSet) {
+                                                            lectureDateTimeSet.add(lectureDateTime + "\n")
+                                                        }
+                                                        Log.d("LECTUREDATETIME", lectureDateTime)
+                                                        Log.d("LECTUREDATETIMELIST", lectureDateTimeSet.toString())
                                                     } else {
                                                         Text(text = "Course schedule not found")
                                                     }
@@ -276,13 +281,14 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
                                     .padding(16.dp)
                             )
 
-                            val courseName = subject + courseNumber
+                            val courseName = subject.uppercase() + courseNumber
+                            val sortedLectureDateTimes = lectureDateTimeSet.sorted()
                             Button(
                                 onClick = {
                                     viewModel.addCourse(
                                         courseName,
                                         lectureLocation,
-                                        lectureDateTimeList.toString(),
+                                        sortedLectureDateTimes.joinToString(separator = "\n"),
                                         instructorName,
                                         title,
                                         requirements

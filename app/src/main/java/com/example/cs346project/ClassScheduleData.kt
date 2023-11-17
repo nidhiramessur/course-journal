@@ -36,5 +36,7 @@ data class CourseInfoDbData (
     val requirements: String = "",
     val lecturedatetime: String = "",
     val lecturelocation: String = "",
-    val professorname: String = ""
+    val professorname: String = "",
+    val courserating: String = "0",
+    val professorrating: String = "0"
 )

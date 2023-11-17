@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,30 +37,19 @@ class CourseManagementActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent{
-            CourseInfo(
-                courseData = CourseData(
-                    courseCode = "CS101",
-                    courseName = "Introduction to Computer Science",
-                    lectureDays = "Monday, Wednesday, Friday",
-                    lectureTimes = "9:00 AM - 10:30 AM",
-                    instructorName = "Dr. Smith",
-                    lectureLocation = "Room 123",
-                    courseRating = 0,
-                    instructorRating = 0
-                )
-            )
+            CourseInfo()
         }
     }
 
 }
 
 @Composable
-fun CourseInfo(courseData: CourseData) {
+fun CourseInfo() {
 
     val viewModel: CourseManagementViewModel = viewModel()
     val courseInfoState = viewModel.courseInfoState.collectAsState()
     val termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05"
-    val courseUUID = "b6bb6d62-342c-4419-a3b7-58d1363f3ad2"
+    val courseUUID = "3cd879a8-247c-4978-ad2c-e963bfe583d1"
 
     LaunchedEffect(key1 = termUUID, key2 = courseUUID) {
         viewModel.fetchCourseInfo(termUUID, courseUUID)
@@ -87,22 +77,28 @@ fun CourseInfo(courseData: CourseData) {
         Log.d("COURSE STATE", courseInfoState.value.toString())
 
         if (courseDBData != null) {
-            Text(courseDBData.name, fontSize = 30.sp,
+            Text(courseDBData.name,
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center)
-            Text(courseDBData.title, fontSize = 25.sp,
+            Text(courseDBData.title,
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center)
             if (courseDBData.requirements.isNotEmpty()) {
-                Text(courseDBData.requirements, fontSize = 15.sp,
+                Text(courseDBData.requirements,
+                    fontSize = 20.sp,
                     modifier = Modifier
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center)
             }
 
-            Text("Course Rating: ${courseData.courseRating}/5", fontSize = 15.sp,
+            Text("Course Rating: ${courseDBData.courserating}/5",
+                fontSize = 17.sp,
                 modifier = Modifier
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center)
@@ -112,30 +108,40 @@ fun CourseInfo(courseData: CourseData) {
             // can make student choose lecture day/time when adding a course...
 
             if (courseDBData.lecturedatetime.isNotEmpty()) {
-                Text(courseDBData.lecturedatetime, fontSize = 15.sp,
+                Text(text = "All lecture times:",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 30.dp),
+                        .padding(20.dp),
+                    textAlign = TextAlign.Center)
+                Text(courseDBData.lecturedatetime,
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     textAlign = TextAlign.Center)
             }
 
             if (courseDBData.lecturelocation.isNotEmpty()) {
-                Text(courseDBData.lecturelocation, fontSize = 15.sp,
+                Text("Lecture location: ${courseDBData.lecturelocation}",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center)
             }
 
             if (courseDBData.professorname.isNotEmpty()) {
-                Text("Instructor: ${courseDBData.professorname}", fontSize = 20.sp,
+                Text("Instructor: ${courseDBData.professorname}",
+                    fontSize = 25.sp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 30.dp),
+                        .padding(top = 20.dp),
                     textAlign = TextAlign.Center)
-                Text("Instructor Rating: ${courseData.instructorRating}/5", fontSize = 15.sp,
+                Text("Instructor Rating: ${courseDBData.professorrating}/5",
+                    fontSize = 17.sp,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 50.dp),
+                        .fillMaxWidth(),
                     textAlign = TextAlign.Center)
             }
         } else {
@@ -147,7 +153,7 @@ fun CourseInfo(courseData: CourseData) {
                 context.startActivity(Intent(context, ToDoListActivity::class.java)) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 50.dp)
+                .padding(top = 30.dp)
         ) {
             Text(" To-do list")
         }
