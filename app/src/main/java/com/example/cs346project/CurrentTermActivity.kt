@@ -29,7 +29,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.cs346project.viewModels.TermViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 
 class CurrentTermActivity : AppCompatActivity() {
@@ -38,7 +60,6 @@ class CurrentTermActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent{
-            val courses = listOf("Math 111", "CS 123", "GEOG 124")
             CurrentTermPage(modifier = Modifier)
         }
 
@@ -48,7 +69,11 @@ class CurrentTermActivity : AppCompatActivity() {
 
 @Composable
 fun CurrentTermPage(modifier: Modifier) {
-    val courses = listOf("Math 111", "CS 123", "GEOG 124")
+    val viewModel: TermViewModel = viewModel()
+    val coursesState = viewModel.coursesState.collectAsState()
+    LaunchedEffect(true) {
+        viewModel.fetchCoursesForTerm("5ee51a2c-022a-46f5-851e-558ad9a14a05")
+    }
     Text("Fall 2023", color = Color.Gray, fontSize = 22.sp,fontWeight = FontWeight.Bold,
         modifier = Modifier
             .fillMaxWidth()
@@ -57,7 +82,7 @@ fun CurrentTermPage(modifier: Modifier) {
     Column(modifier.fillMaxSize().padding(vertical = 40.dp, horizontal = 120.dp)
     ){
         LazyColumn(){
-            items(items = courses){ item->
+            items(items = coursesState.value){ item->
                 ColumnItem(modifier = modifier, name = item)
             }
         }
@@ -74,8 +99,8 @@ fun ColumnItem(modifier:Modifier, name: String){
             .wrapContentHeight()
             .height(100.dp)
             .aspectRatio(3f), colors = CardDefaults.cardColors(
-                containerColor = Color.LightGray
-            ),
+            containerColor = Color.LightGray
+        ),
         elevation = CardDefaults.cardElevation(10.dp)
     ){
         Box(
@@ -87,3 +112,4 @@ fun ColumnItem(modifier:Modifier, name: String){
         }
     }
 }
+
