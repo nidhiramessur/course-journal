@@ -18,7 +18,7 @@ data class ClassScheduleData(
     val scheduleData: List<ScheduleData>
 )
 
-data class CourseInfoData (
+data class CourseInfoAPIData (
     val courseId: String,
     val termName: String,
     val subjectCode: String,
@@ -28,4 +28,15 @@ data class CourseInfoData (
     val description: String,
     val gradingBasis: String,
     val requirementsDescription: String
+)
+
+data class CourseInfoDbData (
+    val name: String = "",
+    val title: String = "",
+    val requirements: String = "",
+    val lecturedatetime: String = "",
+    val lecturelocation: String = "",
+    val professorname: String = "",
+    val courserating: String = "0",
+    val professorrating: String = "0"
 )

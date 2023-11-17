@@ -14,7 +14,7 @@ interface APIService {
     suspend fun getCourseInfo(
         @Path("subject") subject: String,
         @Path("courseNumber") courseNumber: String
-    ): List<CourseInfoData>
+    ): List<CourseInfoAPIData>
 
     @GET("ClassSchedules/1239/{subject}/{courseNumber}")
     suspend fun getClassScheduleInfo(

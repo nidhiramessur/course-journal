@@ -41,22 +41,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import java.util.UUID
+import com.example.cs346project.viewModels.CourseInfoViewModel
 
 
 class CourseInfoDisplayActivity : AppCompatActivity() {
 
-    // Use this to track the current term's UUID for the user
-    private var currentTermUUID: String by mutableStateOf("")
-    // Use this to track the last course's UUID for the user
-    private var currentCourseUUID: String by mutableStateOf("")
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent{
+        setContent {
             CourseInput()
         }
     }
@@ -69,6 +62,10 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
         var isPopupVisible by remember { mutableStateOf(false) }
         val viewModel: CourseInfoViewModel = viewModel()
         var isLoading by remember { mutableStateOf(false) }
+        var lectureDateTime = ""
+        var title = ""
+        var requirements = ""
+        val lectureDateTimeSet = mutableSetOf<String>()
 
         Column(
             modifier = Modifier
@@ -121,7 +118,7 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
             if (isPopupVisible) {
                 Dialog(
                     onDismissRequest = { isPopupVisible = false }
-                ){
+                ) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -141,7 +138,10 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
                                 onClick = { isPopupVisible = false },
                                 modifier = Modifier.align(Alignment.End)
                             ) {
-                                Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Close"
+                                )
                             }
 
 
@@ -164,26 +164,28 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
 
                                     if (specificCourse != null) {
                                         Text(
-                                            text =  "${specificCourse.subjectCode} ${specificCourse.catalogNumber}",
+                                            text = "${specificCourse.subjectCode} ${specificCourse.catalogNumber}",
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 30.sp,
                                             textAlign = TextAlign.Center
                                         )
                                         Text(
-                                            text =  specificCourse.title,
+                                            text = specificCourse.title,
                                             fontWeight = FontWeight.SemiBold,
                                             fontSize = 22.sp,
                                             textAlign = TextAlign.Center
                                         )
+                                        title = specificCourse.title
                                         if (specificCourse.requirementsDescription != null) { // this is needed
                                             Text(
-                                                text =  specificCourse.requirementsDescription,
+                                                text = specificCourse.requirementsDescription,
                                                 fontWeight = FontWeight.Normal,
                                                 fontSize = 15.sp,
                                                 modifier = Modifier
                                                     .padding(bottom = 16.dp),
                                                 textAlign = TextAlign.Center
                                             )
+                                            requirements = specificCourse.requirementsDescription
                                         }
 
                                         val courseID = specificCourse.courseId
@@ -233,6 +235,12 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
                                                             fontSize = 18.sp,
                                                             textAlign = TextAlign.Left
                                                         )
+                                                        lectureDateTime = courseComponent + ": " + lectureDays.joinToString(", ") + startTimeWithoutSeconds + "-" + endTimeWithoutSeconds
+                                                        if (lectureDateTime !in lectureDateTimeSet) {
+                                                            lectureDateTimeSet.add(lectureDateTime + "\n")
+                                                        }
+                                                        Log.d("LECTUREDATETIME", lectureDateTime)
+                                                        Log.d("LECTUREDATETIMELIST", lectureDateTimeSet.toString())
                                                     } else {
                                                         Text(text = "Course schedule not found")
                                                     }
@@ -273,10 +281,19 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
                                     .padding(16.dp)
                             )
 
-                            val courseName = subject + courseNumber
+                            val courseName = subject.uppercase() + courseNumber
+                            val sortedLectureDateTimes = lectureDateTimeSet.sorted()
                             Button(
                                 onClick = {
-                                    addCourse(courseName)
+                                    viewModel.addCourse(
+                                        courseName,
+                                        lectureLocation,
+                                        sortedLectureDateTimes.joinToString(separator = "\n"),
+                                        instructorName,
+                                        title,
+                                        requirements
+                                    )
+                                    isPopupVisible = false
                                 },
                                 modifier = Modifier.padding(top = 16.dp)
                             ) {
@@ -307,43 +324,6 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
         }
 
         return dayNames
-    }
-
-    private fun addCourse(courseName: String) {
-        // Temporarily hardcoding the term UUID - "Fall 2023" in db (user test4)
-        // Every course added will go under the Fall 2023 term for user test4
-        currentTermUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05"
-
-        // Real functionality is when the user is on the term page and clicks on add course
-        // it will navigate to this activity where the user can search for their course
-        // and add the course to the term page
-        // workflow: user signs in, goes to term page, clicks on add course, gets navigated to this page
-        // in the "add course" button on the term page, it should setCurrentTermUUID
-        // and we can get rid of the above line
-
-        val courseUUID = UUID.randomUUID().toString()
-        currentCourseUUID = courseUUID
-
-        val db = FirebaseFirestore.getInstance()
-        val user = FirebaseAuth.getInstance().currentUser
-        user?.let {
-            val courseMap = hashMapOf(
-                "UUID" to courseUUID,
-                "name" to courseName,
-                "notes" to listOf<String>(),
-                "todo" to listOf<String>()
-            )
-
-            db.collection("Users").document(it.uid)
-                .collection("Terms").document(currentTermUUID)
-                .collection("Courses").document(courseUUID)
-                .set(courseMap)
-                .addOnSuccessListener {
-                }
-                .addOnFailureListener { e ->
-                    Log.w("Firestore", "Error adding course document", e)
-                }
-        }
     }
 
 }
