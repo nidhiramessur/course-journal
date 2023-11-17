@@ -39,7 +39,7 @@ class HomepageActivity : AppCompatActivity() {
 
 @Composable
 fun Homepage() {
-    Text("Course Journal", color = Color.LightGray, fontSize = 40.sp,
+    Text("Course Journal", color = Color.LightGray, fontSize = 28.sp,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 120.dp, vertical = 140.dp),
@@ -82,6 +82,11 @@ fun Homepage() {
             context.startActivity(Intent(context, CurrentTermActivity::class.java))
         }) {
             Text("Current Term")
+        }
+        Button(onClick = {
+            context.startActivity(Intent(context, NotesActivity::class.java))
+        }) {
+            Text("Notes")
         }
         Button(onClick = {
             // Log out the user
