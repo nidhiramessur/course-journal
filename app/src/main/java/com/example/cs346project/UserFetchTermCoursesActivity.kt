@@ -1,129 +1,91 @@
 package com.example.cs346project
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FieldValue
-import java.util.UUID
 import android.util.Log
 
 class UserFetchTermCoursesActivity : AppCompatActivity() {
 
-    private lateinit var termInput: EditText
-    private lateinit var courseInput: EditText
-    private lateinit var noteInput: EditText
-    private lateinit var todoInput: EditText
+    private lateinit var termsSpinner: Spinner
+    private lateinit var coursesTextView: TextView
 
-    // Use this to track the current term's UUID for the user
-    private var currentTermUUID: String = ""
-
-    // Use this to track the last course's UUID for the user
-    private var currentCourseUUID: String = ""
+    // This will hold the list of term names and their UUIDs
+    private val termsMap = hashMapOf<String, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_firestore)
 
-        termInput = findViewById(R.id.termInput)
-        courseInput = findViewById(R.id.courseInput)
-        noteInput = findViewById(R.id.noteInput)
-        todoInput = findViewById(R.id.todoInput)
+        termsSpinner = findViewById(R.id.termsSpinner) 
+        coursesTextView = findViewById(R.id.coursesTextView) 
 
-        findViewById<Button>(R.id.addTermButton).setOnClickListener { addTerm() }
-        findViewById<Button>(R.id.addCourseButton).setOnClickListener { addCourse() }
-        findViewById<Button>(R.id.addNoteButton).setOnClickListener { addNote() }
-        findViewById<Button>(R.id.addTodoButton).setOnClickListener { addTodo() }
+        loadTerms()
     }
 
-    private fun addTerm() {
-        val termName = termInput.text.toString()
-        val termUUID = UUID.randomUUID().toString()
-        currentTermUUID = termUUID
-
-        val db = FirebaseFirestore.getInstance()
+    private fun loadTerms() {
         val user = FirebaseAuth.getInstance().currentUser
-        user?.let {
-            val termMap = hashMapOf(
-                "UUID" to termUUID,
-                "name" to termName,
-                "courses" to listOf<HashMap<String, Any>>()  // This will hold courses
-            )
+        val db = FirebaseFirestore.getInstance()
 
-            db.collection("Users").document(it.uid)
+        user?.let { firebaseUser ->
+            db.collection("Users").document(firebaseUser.uid)
+                .collection("Terms")
+                .get()
+                .addOnSuccessListener { documents ->
+                    val termNames = documents.mapNotNull { it.getString("name") }
+                    val spinnerArrayAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, termNames)
+                    termsSpinner.adapter = spinnerArrayAdapter
+                    
+                    documents.forEach { document ->
+                        termsMap[document.getString("name") ?: ""] = document.id
+                    }
+                    
+                    termsSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                            val termName = parent.getItemAtPosition(position).toString()
+                            termsMap[termName]?.let { uuid ->
+                                loadCoursesForTerm(uuid)
+                            }
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>) {
+                            coursesTextView.text = "Please select a term."
+                        }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.w("Firestore", "Error loading terms", e)
+                }
+        }
+    }
+
+    private fun loadCoursesForTerm(termUUID: String) {
+        val user = FirebaseAuth.getInstance().currentUser
+        val db = FirebaseFirestore.getInstance()
+
+        user?.let { firebaseUser ->
+            db.collection("Users").document(firebaseUser.uid)
                 .collection("Terms").document(termUUID)
-                .set(termMap)
-                .addOnSuccessListener {
+                .collection("Courses")
+                .get()
+                .addOnSuccessListener { documents ->
+                    val courseInfo = documents.mapNotNull { document ->
+                        val courseName = document.getString("name") ?: "Unknown"
+                        val notesCount = (document.get("notes") as? List<*>)?.size ?: 0
+                        val todoCount = (document.get("todo") as? List<*>)?.size ?: 0
+                        "$courseName - Notes: $notesCount, Todos: $todoCount"
+                    }.joinToString("\n")
+                    coursesTextView.text = courseInfo
                 }
                 .addOnFailureListener { e ->
-                    Log.w("Firestore", "Error adding term document", e)
-                }
-        }
-    }
-
-    private fun addCourse() {
-        val courseName = courseInput.text.toString()
-        val courseUUID = UUID.randomUUID().toString()
-        currentCourseUUID = courseUUID
-
-        val db = FirebaseFirestore.getInstance()
-        val user = FirebaseAuth.getInstance().currentUser
-        user?.let {
-            val courseMap = hashMapOf(
-                "UUID" to courseUUID,
-                "name" to courseName,
-                "notes" to listOf<String>(), 
-                "todo" to listOf<String>()  
-            )
-
-            db.collection("Users").document(it.uid)
-                .collection("Terms").document(currentTermUUID)
-                .collection("Courses").document(courseUUID)
-                .set(courseMap)
-                .addOnSuccessListener {
-                }
-                .addOnFailureListener { e ->
-                    Log.w("Firestore", "Error adding course document", e)
-                }
-        }
-    }
-
-    private fun addNote() {
-        val note = noteInput.text.toString()
-
-        val db = FirebaseFirestore.getInstance()
-        val user = FirebaseAuth.getInstance().currentUser
-        user?.let {
-            db.collection("Users").document(it.uid)
-                .collection("Terms").document(currentTermUUID)
-                .collection("Courses").document(currentCourseUUID)
-                .update("notes", FieldValue.arrayUnion(note))
-                .addOnSuccessListener {
-                }
-                .addOnFailureListener { e ->
-                    Log.w("Firestore", "Error adding note", e)
-                }
-        }
-    }
-
-    private fun addTodo() {
-        val todo = todoInput.text.toString()
-
-        val db = FirebaseFirestore.getInstance()
-        val user = FirebaseAuth.getInstance().currentUser
-        user?.let {
-            db.collection("Users").document(it.uid)
-                .collection("Terms").document(currentTermUUID)
-                .collection("Courses").document(currentCourseUUID)
-                .update("todo", FieldValue.arrayUnion(todo))
-                .addOnSuccessListener {
-                }
-                .addOnFailureListener { e ->
-                    Log.w("Firestore", "Error adding todo", e)
+                    Log.w("Firestore", "Error loading courses for term $termUUID", e)
                 }
         }
     }
 }
-

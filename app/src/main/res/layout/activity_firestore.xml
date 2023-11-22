@@ -1,57 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp">
 
-    <EditText
-        android:id="@+id/termInput"
+    <!-- Spinner for selecting terms -->
+    <Spinner
+        android:id="@+id/termsSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Term" />
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp"
+        android:spinnerMode="dropdown" />
 
-    <Button
-        android:id="@+id/addTermButton"
+    <!-- TextView to display courses and their notes/todo counts -->
+    <TextView
+        android:id="@+id/coursesTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Term" />
+        android:layout_below="@id/termsSpinner"
+        android:layout_marginTop="24dp"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:padding="8dp"
+        android:scrollbars="vertical"
+        android:text="Select a term to view courses..." />
 
-    <EditText
-        android:id="@+id/courseInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Course" />
-
-    <Button
-        android:id="@+id/addCourseButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Course" />
-
-    <EditText
-        android:id="@+id/noteInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Note" />
-
-    <Button
-        android:id="@+id/addNoteButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Note" />
-
-    <EditText
-        android:id="@+id/todoInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Todo" />
-
-    <Button
-        android:id="@+id/addTodoButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Todo" />
-
-</LinearLayout>
-
+</RelativeLayout>
