@@ -47,6 +47,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.cs346project.viewModels.NotesViewModel
 import com.example.cs346project.viewModels.TermViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
@@ -79,11 +80,12 @@ class NotesActivity : AppCompatActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Notes(modifier: Modifier) {
-    var newNote by remember {
-        mutableStateOf("")
+    val viewModel: NotesViewModel = viewModel()
+    val notesState = viewModel.notesState.collectAsState()
+    LaunchedEffect(true) {
+        viewModel.fetchCourseNotes(termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05", CourseUUID =
+        "f1763f11-625f-434d-9af7-85cdedd10117")
     }
-    var notes = listOf("Hi this is the first of many test notes you can add anything you want here" ,
-        "Hello this is another note for testing purposed", "Hey")
     Column(
         modifier
             .fillMaxSize(),
@@ -93,18 +95,10 @@ fun Notes(modifier: Modifier) {
 
 
         LazyColumn(){
-            items(items = notes){ item->
-                ColumnI(modifier = modifier, name = item)
+            items(items = notesState.value){ note->
+                ColumnI(modifier = modifier, name = note.data)
             }
         }
-        AddNotes(
-            text = newNote,
-            onValueChange = { newNote = it },
-            onAddNote = {
-                if (newNote.isNotBlank()) {
-                }
-            }
-        )
     }
 }
 
