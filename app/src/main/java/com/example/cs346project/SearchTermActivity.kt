@@ -1,5 +1,6 @@
 package com.example.cs346project
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -21,6 +22,8 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +34,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.cs346project.viewModels.TermViewModel
 
 class SearchTermActivity : AppCompatActivity() {
 
@@ -42,8 +47,20 @@ class SearchTermActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("StateFlowValueCalledInComposition")
     @Composable
     fun SearchTerm() {
+
+        val viewModel: TermViewModel = viewModel()
+        val termsState = viewModel.termsState.collectAsState()
+        var selectedTerm by remember { mutableStateOf("") }
+
+        // uncomment once firestore is up
+        LaunchedEffect(true) {
+            viewModel.fetchTerms()
+        }
+
+        val termsList = termsState.value.toMutableList()
 
         Column(
             modifier = Modifier
@@ -64,10 +81,16 @@ class SearchTermActivity : AppCompatActivity() {
                 Icon(imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = "Close")
             }
 
-            DropdownMenu()
+            selectedTerm = dropdownMenu(termsList)
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    if (selectedTerm != "" && selectedTerm != "Select a Term") {
+                        context.startActivity(Intent(context, CurrentTermActivity::class.java))
+                    } else {
+                        Toast.makeText(context,"No term selected",Toast.LENGTH_LONG).show()
+                    }
+                },
                 modifier = Modifier.padding(8.dp)
             ) {
                 Text("Go to Term")
@@ -78,11 +101,9 @@ class SearchTermActivity : AppCompatActivity() {
 
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
-    fun DropdownMenu() {
-        val parentOptions = listOf<String>("Animals", "Bird", "Fish")
+    fun dropdownMenu(termsList: MutableList<String>): String {
         var expandedState by remember { mutableStateOf(false) }
-        var selectedOption by remember { mutableStateOf(parentOptions[0]) }
-        var mContext = LocalContext.current
+        var selectedOption by remember { mutableStateOf("Select a Term") }
 
         ExposedDropdownMenuBox(
             expanded = expandedState,
@@ -100,19 +121,21 @@ class SearchTermActivity : AppCompatActivity() {
                 expanded = expandedState,
                 onDismissRequest = { expandedState = false }) {
 
-                parentOptions.forEach{
+                // replace next line once firestore is up
+                termsList.forEach{
                     eachOption -> DropdownMenuItem(onClick = { 
                     selectedOption = eachOption
                     expandedState = false
-                    Toast.makeText(mContext,""+selectedOption,Toast.LENGTH_LONG).show()
                     }) {
                         Text(text = eachOption, fontSize = 28.sp)
-                } 
+                    }
                 }
 
             }
 
         }
+
+        return selectedOption
 
     }
 

@@ -51,14 +51,17 @@ fun Homepage() {
             .padding(120.dp),
         verticalArrangement = Arrangement.Bottom
     ){
+        val context = LocalContext.current
 
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            context.startActivity(Intent(context, SearchTermActivity::class.java))
+        }) {
             Text("Search Term")
         }
         Button(onClick = { /*TODO*/ }) {
             Text("  Add Term  ")
         }
-        val context = LocalContext.current
+
         Button(onClick = {
             context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
         }) {

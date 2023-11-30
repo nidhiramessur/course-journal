@@ -17,6 +17,9 @@ class TermViewModel : ViewModel() {
     private val _coursesState = MutableStateFlow<List<String>>(emptyList())
     val coursesState = _coursesState.asStateFlow()
 
+    private val _termsState = MutableStateFlow<List<String>>(emptyList())
+    val termsState = _termsState.asStateFlow()
+
     suspend fun fetchCoursesForTerm(termUUID: String) {
         viewModelScope.launch {
             val user = auth.currentUser
@@ -31,6 +34,22 @@ class TermViewModel : ViewModel() {
 
                 val courseList = documents.documents.mapNotNull { it.getString("name") }
                 _coursesState.value = courseList
+            }
+        }
+    }
+
+    suspend fun fetchTerms() {
+        viewModelScope.launch {
+            val user = auth.currentUser
+            if (user != null) {
+                val documents = db.collection("Users")
+                    .document(user.uid)
+                    .collection("Terms")
+                    .get()
+                    .await()
+
+                val termList = documents.documents.mapNotNull { it.getString("name") }
+                _termsState.value = termList
             }
         }
     }
