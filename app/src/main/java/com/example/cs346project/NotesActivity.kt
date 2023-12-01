@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,8 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.LaunchedEffect
@@ -42,13 +45,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.semantics.SemanticsProperties.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cs346project.viewModels.NotesViewModel
 import com.example.cs346project.viewModels.TermViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
@@ -82,25 +89,107 @@ class NotesActivity : AppCompatActivity() {
 fun Notes(modifier: Modifier) {
     val viewModel: NotesViewModel = viewModel()
     val notesState = viewModel.notesState.collectAsState()
-    LaunchedEffect(true) {
+    var showDialog by remember {
+        mutableStateOf((false))
+    }
+    var noteData by remember {
+        mutableStateOf("")
+    }
+    var refresh by remember {
+        mutableStateOf(0)
+    }
+
+    LaunchedEffect(refresh) {
         viewModel.fetchCourseNotes(termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05", CourseUUID =
         "f1763f11-625f-434d-9af7-85cdedd10117")
     }
     Column(
         modifier
             .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally
     ){
-        TopAppBar(title = { Text("Notes") })
-
-
+        TopAppBar(title = { Text("Notes") },
+            actions = {
+                TextButton(onClick = { showDialog = true}) {
+                    Text("Add note")
+                }
+            }
+        )
         LazyColumn(){
             items(items = notesState.value){ note->
                 ColumnI(modifier = modifier, name = note.data)
             }
         }
     }
+    if (showDialog){
+        AddNewNote(
+            onDismiss = {showDialog = false
+                noteData = ""},
+            onSave = {note ->
+                viewModel.addNote(termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05", CourseUUID =
+                "f1763f11-625f-434d-9af7-85cdedd10117",note)
+                showDialog = false
+                noteData = ""
+                refresh++
+            }
+        )
+    }
 }
+
+
+@Composable
+fun AddNewNote(onDismiss: () -> Unit, onSave: (String) -> Unit){
+    var noteData by remember {
+        mutableStateOf("")
+    }
+    Dialog(onDismissRequest = { onDismiss()}) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.37f)
+            .background(color = Color.Gray)) {
+
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = "Add New Note",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 16.dp)
+
+                )
+                TextField(
+                    value = noteData,
+                    onValueChange = { noteData = it },
+                    label = { Text("Enter note here...") },
+                    modifier = Modifier.fillMaxWidth().height(150.dp)
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    TextButton(onClick = { onDismiss() }) {
+                        Text("Cancel")
+                    }
+                    TextButton(onClick = {
+                        onSave(noteData)
+                    }) {
+                        Text("Save")
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+
 
 @Composable
 fun ColumnI(modifier:Modifier, name: String){
@@ -116,40 +205,11 @@ fun ColumnI(modifier:Modifier, name: String){
     ){
         Box(
             modifier
-                .padding(10.dp)
+                .padding(4.dp)
                 .fillMaxSize(), contentAlignment = Alignment.Center
         ){
-            Text(text = name, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text(text = name, fontSize = 22.sp, fontWeight = FontWeight.Bold, maxLines = 3,
+                overflow = TextOverflow.Ellipsis)
         }
     }
 }
-
-@Composable
-fun AddNotes(
-    text: String,
-    onValueChange: (String) -> Unit,
-    onAddNote: () -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(20.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        OutlinedTextField(
-            value = text,
-            onValueChange = onValueChange,
-            placeholder = { Text("Add new note...") },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = androidx.compose.ui.text.input.ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    onAddNote()
-                }
-            ),
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 12.dp)
-        )
-    }
-}
-
