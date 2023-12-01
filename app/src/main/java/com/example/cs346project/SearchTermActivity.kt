@@ -104,7 +104,9 @@ class SearchTermActivity : AppCompatActivity() {
             Button(
                 onClick = {
                     if (selectedTerm != "" && selectedTerm != "Select a Term") {
-                        context.startActivity(Intent(context, CurrentTermActivity::class.java))
+                        val intent = Intent(context, TermActivity::class.java)
+                        intent.putExtra("SELECTED_TERM", selectedTerm) // Passing the course name
+                        context.startActivity(intent)
                     } else {
                         Toast.makeText(context,"No term selected",Toast.LENGTH_LONG).show()
                     }

@@ -41,15 +41,17 @@ class CourseManagementActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val courseName = intent.getStringExtra("COURSE_NAME") // Retrieve the course name
+
         setContent{
-            CourseInfo()
+            CourseInfo(courseName ?: "") // Pass the course name to the composable
         }
     }
 
 }
 
 @Composable
-fun CourseInfo() {
+fun CourseInfo(courseName: String) {
 
     val viewModel: CourseManagementViewModel = viewModel()
     val courseInfoState = viewModel.courseInfoState.collectAsState()
@@ -74,6 +76,7 @@ fun CourseInfo() {
         val context = LocalContext.current
         IconButton(
             onClick = {
+                // Need to add logic to return to current term or term activity
                 context.startActivity(Intent(context, CurrentTermActivity::class.java))
             },
             modifier = Modifier.align(Alignment.Start)

@@ -79,6 +79,7 @@ class CourseInfoDisplayActivity : AppCompatActivity() {
             val context = LocalContext.current
             IconButton(
                 onClick = {
+                    // Navigate to current term because user can only add courses in current term not in previous terms
                     context.startActivity(Intent(context, CurrentTermActivity::class.java))
                 },
                 modifier = Modifier.align(Alignment.Start)

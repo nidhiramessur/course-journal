@@ -22,11 +22,38 @@ class TermViewModel : ViewModel() {
     private val _termsState = MutableStateFlow<List<String>>(emptyList())
     val termsState = _termsState.asStateFlow()
 
-    suspend fun fetchCoursesForTerm(termUUID: String) {
+    fun fetchTermUUIDFromName(termName: String, onResult: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val user = auth.currentUser
+                if (user != null) {
+                    // Query to find the term UUID based on term name
+                    val termQuerySnapshot = db
+                        .collection("Users")
+                        .document(user.uid)
+                        .collection("Terms")
+                        .whereEqualTo("name", termName) // Assuming 'name' is the field for term name
+                        .get()
+                        .await()
+
+                    // Assuming that term names are unique and there's only one document
+                    val termUUID = termQuerySnapshot.documents.firstOrNull()?.id
+                    if (termUUID != null) {
+                        onResult(termUUID)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun fetchCoursesForTerm(termUUID: String) {
         viewModelScope.launch {
             val user = auth.currentUser
             if (user != null) {
-                val documents = db.collection("Users")
+                val documents = db
+                    .collection("Users")
                     .document(user.uid)
                     .collection("Terms")
                     .document(termUUID)
