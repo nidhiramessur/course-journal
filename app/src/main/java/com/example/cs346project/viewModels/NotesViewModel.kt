@@ -36,11 +36,14 @@ class NotesViewModel : ViewModel() {
 
                 val notesList = documents.documents.mapNotNull {document ->
                     val data = document.getString("data")
-                    data?.let { Note(data) }
+                    val nuid = document.getString("nuid")
+                    data?.let { Note(data, nuid?:"") }
                 }
 
                 _notesState.value = notesList
             }
         }
     }
+
+    fun addNote(termUUID: String, CourseUUID: String, note:String){}
 }
