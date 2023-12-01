@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.cs346project.models.Note
 import com.example.cs346project.viewModels.NotesViewModel
 import com.example.cs346project.viewModels.TermViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -98,6 +100,9 @@ fun Notes(modifier: Modifier) {
     var refresh by remember {
         mutableStateOf(0)
     }
+    var noteSelected by remember {
+        mutableStateOf<Note?>(null)
+    }
 
     LaunchedEffect(refresh) {
         viewModel.fetchCourseNotes(termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05", CourseUUID =
@@ -117,9 +122,21 @@ fun Notes(modifier: Modifier) {
         )
         LazyColumn(){
             items(items = notesState.value){ note->
-                ColumnI(modifier = modifier, name = note.data)
+                ColumnI(modifier = modifier, name = note.data, onClick ={ noteSelected = note})
             }
         }
+    }
+    noteSelected?.let{ note ->
+        NoteDetails(
+            note = note,
+            onDismiss = { noteSelected = null},
+            onUpdate = {newnote ->
+                viewModel.updateNote(termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05", CourseUUID =
+                "f1763f11-625f-434d-9af7-85cdedd10117",newnote)
+                noteSelected = null
+                refresh++
+            }
+        )
     }
     if (showDialog){
         AddNewNote(
@@ -166,7 +183,9 @@ fun AddNewNote(onDismiss: () -> Unit, onSave: (String) -> Unit){
                     value = noteData,
                     onValueChange = { noteData = it },
                     label = { Text("Enter note here...") },
-                    modifier = Modifier.fillMaxWidth().height(150.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
                 )
                 Row(
                     modifier = Modifier
@@ -192,12 +211,13 @@ fun AddNewNote(onDismiss: () -> Unit, onSave: (String) -> Unit){
 
 
 @Composable
-fun ColumnI(modifier:Modifier, name: String){
+fun ColumnI(modifier:Modifier, name: String, onClick: () ->Unit){
     Card(
         modifier
             .padding(6.dp)
             .wrapContentHeight()
             .height(100.dp)
+            .clickable { onClick() }
             .aspectRatio(3f), colors = CardDefaults.cardColors(
             containerColor = Color.LightGray
         ),
@@ -210,6 +230,71 @@ fun ColumnI(modifier:Modifier, name: String){
         ){
             Text(text = name, fontSize = 22.sp, fontWeight = FontWeight.Bold, maxLines = 3,
                 overflow = TextOverflow.Ellipsis)
+        }
+    }
+}
+
+@Composable
+fun NoteDetails(note: Note, onDismiss: () -> Unit, onUpdate: (Note) -> Unit) {
+    var newNoteData by remember {
+        mutableStateOf(note.data)
+    }
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.37f)
+                .background(color = Color.Gray)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    text = "View Full Note",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 16.dp)
+
+                )
+                TextField(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp),
+                    value = newNoteData,
+                    onValueChange = {newNoteData = it },
+                    label = { Text("Edit note here", fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
+                    ) }
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    TextButton(onClick = {
+                        val newNote = note.copy(data = newNoteData)
+                        onUpdate(newNote)
+                    }) {
+                        Text("Update", fontWeight = FontWeight.Bold)
+                    }
+
+                    TextButton(onClick = { onDismiss() }) {
+                        Text("Cancel")
+                    }
+
+                    TextButton(onClick = {
+                        // ADD HERE
+                    }) {
+                        Text("Delete", color = Color.Red, fontWeight = FontWeight.Bold)
+                    }
+                }
+
+            }
         }
     }
 }
