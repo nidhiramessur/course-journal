@@ -99,7 +99,7 @@ fun CurrentTermPage(modifier: Modifier) {
             },
             modifier = Modifier
                 .padding(top = 30.dp)) {
-            Text("Add Course") // Temporary (Needs to be in term page)
+            Text("Add Course")
         }
 
     }
