@@ -1,10 +1,10 @@
 package com.example.cs346project
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -79,7 +79,9 @@ fun CurrentTermPage(modifier: Modifier) {
             .fillMaxWidth()
             .padding(horizontal = 120.dp, vertical = 20.dp),
         textAlign = TextAlign.Center)
-    Column(modifier
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight()
         .padding(horizontal = 40.dp, vertical = 70.dp)
@@ -87,7 +89,7 @@ fun CurrentTermPage(modifier: Modifier) {
 
         LazyColumn(Modifier.weight(1f)){
             items(items = coursesState.value){ item->
-                ColumnItem(modifier = modifier, name = item)
+                ColumnItem(modifier = modifier, name = item, context)
             }
         }
 
@@ -96,8 +98,7 @@ fun CurrentTermPage(modifier: Modifier) {
                 context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp)) {
+                .padding(top = 30.dp)) {
             Text("Add Course") // Temporary (Needs to be in term page)
         }
 
@@ -105,21 +106,25 @@ fun CurrentTermPage(modifier: Modifier) {
 }
 
 @Composable
-fun ColumnItem(modifier:Modifier, name: String){
+fun ColumnItem(modifier: Modifier, name: String, context: Context){
     Card(
         modifier
             .padding(6.dp)
             .wrapContentHeight()
             .height(100.dp)
-            .aspectRatio(3f), colors = CardDefaults.cardColors(
+            .aspectRatio(3f),
+        colors = CardDefaults.cardColors(
             containerColor = Color.LightGray
         ),
         elevation = CardDefaults.cardElevation(10.dp)
     ){
-        Box(
-            modifier
+        Button(
+            onClick = {
+                context.startActivity(Intent(context, CourseManagementActivity::class.java))
+            },
+            modifier = Modifier
                 .padding(10.dp)
-                .fillMaxSize(), contentAlignment = Alignment.Center
+                .fillMaxSize(),
         ){
             Text(text = name, fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }

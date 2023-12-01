@@ -74,7 +74,7 @@ fun CourseInfo() {
         val context = LocalContext.current
         IconButton(
             onClick = {
-                context.startActivity(Intent(context, HomepageActivity::class.java))
+                context.startActivity(Intent(context, CurrentTermActivity::class.java))
             },
             modifier = Modifier.align(Alignment.Start)
         ) {
