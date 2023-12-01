@@ -1,6 +1,7 @@
 package com.example.cs346project.viewModels
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.UUID
 
 class TermViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()
@@ -51,6 +53,41 @@ class TermViewModel : ViewModel() {
                 val termList = documents.documents.mapNotNull { it.getString("name") }
                 _termsState.value = termList
             }
+        }
+    }
+
+    fun addTerm(termName: String) {
+        // Temporarily hardcoding the term UUID - "Fall 2023" in db (user test4)
+        // Every course added will go under the Fall 2023 term for user test4
+//        val currentTermUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05"
+
+        // Real functionality is when the user is on the term page and clicks on add course
+        // it will navigate to this activity where the user can search for their course
+        // and add the course to the term page
+        // workflow: user signs in, goes to term page, clicks on add course, gets navigated to this page
+        // in the "add course" button on the term page, it should setCurrentTermUUID
+        // and we can get rid of the above line
+
+//        val courseUUID = UUID.randomUUID().toString()
+//        val currentCourseUUID = courseUUID
+        val termUUID = UUID.randomUUID().toString()
+
+        val db = FirebaseFirestore.getInstance()
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.let {
+            val termMap = hashMapOf(
+                "UUID" to termUUID,
+                "name" to termName
+            )
+
+            db.collection("Users").document(it.uid)
+                .collection("Terms").document(termUUID)
+                .set(termMap)
+                .addOnSuccessListener {
+                }
+                .addOnFailureListener { e ->
+                    Log.w("Firestore", "Error adding course document", e)
+                }
         }
     }
 }
