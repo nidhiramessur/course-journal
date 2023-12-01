@@ -53,6 +53,11 @@ fun Homepage() {
     ){
         val context = LocalContext.current
 
+        Button(onClick = {
+            context.startActivity(Intent(context, CurrentTermActivity::class.java))
+        }) {
+            Text("Current Term")
+        }
         Button(
             onClick = {
                 context.startActivity(Intent(context, SearchTermActivity::class.java))
@@ -60,13 +65,6 @@ fun Homepage() {
             modifier = Modifier.fillMaxWidth()) {
             Text("Search or Add Term")
         }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
-        }) {
-            Text("Add Course") // Temporary (Needs to be in term page)
-        }
-
         Button(onClick = {
             context.startActivity(Intent(context, CourseManagementActivity::class.java))
         }) {
