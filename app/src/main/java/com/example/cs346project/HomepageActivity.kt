@@ -51,14 +51,16 @@ fun Homepage() {
             .padding(120.dp),
         verticalArrangement = Arrangement.Bottom
     ){
-
-        Button(onClick = { /*TODO*/ }) {
-            Text("Search Term")
-        }
-        Button(onClick = { /*TODO*/ }) {
-            Text("  Add Term  ")
-        }
         val context = LocalContext.current
+
+        Button(
+            onClick = {
+                context.startActivity(Intent(context, SearchTermActivity::class.java))
+            },
+            modifier = Modifier.fillMaxWidth()) {
+            Text("Search or Add Term")
+        }
+
         Button(onClick = {
             context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
         }) {
