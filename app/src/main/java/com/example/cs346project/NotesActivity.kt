@@ -32,8 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +47,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.semantics.SemanticsProperties.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -142,13 +145,15 @@ fun AddNewNote(onDismiss: () -> Unit, onSave: (String) -> Unit){
     Dialog(onDismissRequest = { onDismiss()}) {
         Box(modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.25f)
+            .fillMaxHeight(0.37f)
             .background(color = Color.Gray)) {
 
             Column(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
             ) {
                 Text(
                     text = "Add New Note",
@@ -160,8 +165,8 @@ fun AddNewNote(onDismiss: () -> Unit, onSave: (String) -> Unit){
                 TextField(
                     value = noteData,
                     onValueChange = { noteData = it },
-                    label = { Text("Enter note here") },
-                    modifier = Modifier.fillMaxWidth()
+                    label = { Text("Enter note here...") },
+                    modifier = Modifier.fillMaxWidth().height(150.dp)
                 )
                 Row(
                     modifier = Modifier
@@ -200,10 +205,11 @@ fun ColumnI(modifier:Modifier, name: String){
     ){
         Box(
             modifier
-                .padding(10.dp)
+                .padding(4.dp)
                 .fillMaxSize(), contentAlignment = Alignment.Center
         ){
-            Text(text = name, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text(text = name, fontSize = 22.sp, fontWeight = FontWeight.Bold, maxLines = 3,
+                overflow = TextOverflow.Ellipsis)
         }
     }
 }
