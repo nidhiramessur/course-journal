@@ -39,60 +39,69 @@ class HomepageActivity : AppCompatActivity() {
 
 @Composable
 fun Homepage() {
-    Text("Course Journal", color = Color.LightGray, fontSize = 28.sp,
+    Text("Course Journal", color = Color.LightGray, fontSize = 40.sp,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 120.dp, vertical = 140.dp),
+            .padding(horizontal = 100.dp, vertical = 140.dp),
         textAlign = TextAlign.Center)
     Column(horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(120.dp),
+            .padding(vertical = 190.dp),
         verticalArrangement = Arrangement.Bottom
     ){
         val context = LocalContext.current
 
         Button(
             onClick = {
-                context.startActivity(Intent(context, SearchTermActivity::class.java))
+                context.startActivity(Intent(context, CurrentTermActivity::class.java))
             },
-            modifier = Modifier.fillMaxWidth()) {
-            Text("Search or Add Term")
-        }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
-        }) {
-            Text("Add Course") // Temporary (Needs to be in term page)
-        }
-
-        Button(onClick = {
-            context.startActivity(Intent(context, CourseManagementActivity::class.java))
-        }) {
-            Text(" CS346 ") // Temporary (Needs to be in term page)
-        }
-        Button(onClick = {
-            context.startActivity(Intent(context, UserFetchTermCoursesActivity::class.java))
-        }) {
-            Text("Demo Backend") // Temporary (Needs to be in term page)
-        }
-        Button(onClick = {
-            context.startActivity(Intent(context, CurrentTermActivity::class.java))
-        }) {
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 50.dp)
+        ) {
             Text("Current Term")
         }
-        Button(onClick = {
-            context.startActivity(Intent(context, NotesActivity::class.java))
-        }) {
-            Text("Notes")
+        Button(
+            onClick = {
+                context.startActivity(Intent(context, SearchTermActivity::class.java))
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 50.dp)
+        ) {
+            Text("Search or Add Term")
         }
-        Button(onClick = {
-            // Log out the user
-            FirebaseAuth.getInstance().signOut()
-            // Navigate to the MainActivity
-            context.startActivity(Intent(context, MainActivity::class.java))
-        }) {
+        Button(
+            onClick = {
+                context.startActivity(Intent(context, UserFetchTermCoursesActivity::class.java))
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 50.dp)
+        ) {
+            Text("Demo Backend") // Temporary (Needs to be in term page)
+        }
+        Button(
+            onClick = {
+                context.startActivity(Intent(context, NotesActivity::class.java))
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 50.dp)
+        ) {
+            Text("Notes") // Temporary (Needs to be in course management page)
+        }
+        Button(
+            onClick = {
+                FirebaseAuth.getInstance().signOut()
+                context.startActivity(Intent(context, MainActivity::class.java))
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 50.dp)
+        ) {
             Text("Logout")
         }
     }

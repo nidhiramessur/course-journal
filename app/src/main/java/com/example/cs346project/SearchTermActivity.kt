@@ -62,7 +62,6 @@ class SearchTermActivity : AppCompatActivity() {
         var selectedTerm by remember { mutableStateOf("") }
         var newTerm by remember { mutableStateOf("") }
 
-        // uncomment once firestore is up
         LaunchedEffect(true) {
             viewModel.fetchTerms()
         }
@@ -104,7 +103,9 @@ class SearchTermActivity : AppCompatActivity() {
             Button(
                 onClick = {
                     if (selectedTerm != "" && selectedTerm != "Select a Term") {
-                        context.startActivity(Intent(context, CurrentTermActivity::class.java))
+                        val intent = Intent(context, TermActivity::class.java)
+                        intent.putExtra("SELECTED_TERM", selectedTerm) // Passing the course name
+                        context.startActivity(intent)
                     } else {
                         Toast.makeText(context,"No term selected",Toast.LENGTH_LONG).show()
                     }
@@ -173,7 +174,6 @@ class SearchTermActivity : AppCompatActivity() {
                 expanded = expandedState,
                 onDismissRequest = { expandedState = false }) {
 
-                // replace next line once firestore is up
                 termsList.forEach{
                     eachOption -> DropdownMenuItem(onClick = { 
                     selectedOption = eachOption

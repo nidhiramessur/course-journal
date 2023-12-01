@@ -3,6 +3,7 @@ package com.example.cs346project
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
@@ -37,13 +38,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cs346project.viewModels.TermViewModel
 
 
-class CurrentTermActivity : AppCompatActivity() {
+class TermActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val term = intent.getStringExtra("SELECTED_TERM") // Retrieve the term name
+
+        Log.d("SELECTED_TERM", term?:"")
         setContent{
-            CurrentTermPage(modifier = Modifier)
+            TermPage(term?: "", modifier = Modifier)
         }
 
     }
@@ -51,19 +55,20 @@ class CurrentTermActivity : AppCompatActivity() {
 }
 
 @Composable
-fun CurrentTermPage(modifier: Modifier) {
+fun TermPage(term: String, modifier: Modifier) {
     val viewModel: TermViewModel = viewModel()
     val coursesState = viewModel.coursesState.collectAsState()
-    LaunchedEffect(true) {
-        viewModel.fetchCoursesForTerm("5ee51a2c-022a-46f5-851e-558ad9a14a05")
-    }
 
-    // Need to change the UUID above
+    LaunchedEffect(true) {
+        viewModel.fetchTermUUIDFromName(term) { termUUID ->
+            viewModel.fetchCoursesForTerm(termUUID)
+        }
+    }
 
     val context = LocalContext.current
     IconButton(
         onClick = {
-            context.startActivity(Intent(context, HomepageActivity::class.java))
+            context.startActivity(Intent(context, SearchTermActivity::class.java))
         },
         modifier = Modifier.height(60.dp)
     ) {
@@ -73,12 +78,13 @@ fun CurrentTermPage(modifier: Modifier) {
         )
     }
 
-    // Need to change the hardcoded "Fall 2023"
-    Text("Fall 2023", color = Color.Gray, fontSize = 22.sp,fontWeight = FontWeight.Bold,
+    Text(
+        term, color = Color.Gray, fontSize = 27.sp, fontWeight = FontWeight.Bold,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 120.dp, vertical = 20.dp),
-        textAlign = TextAlign.Center)
+        textAlign = TextAlign.Center
+    )
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -89,24 +95,15 @@ fun CurrentTermPage(modifier: Modifier) {
 
         LazyColumn(Modifier.weight(1f)){
             items(items = coursesState.value){ item->
-                ColumnItem(modifier = modifier, name = item, context)
+                TermColumnItem(modifier = modifier, courseName = item, context, termName = term)
             }
-        }
-
-        Button(
-            onClick = {
-                context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
-            },
-            modifier = Modifier
-                .padding(top = 30.dp)) {
-            Text("Add Course")
         }
 
     }
 }
 
 @Composable
-fun ColumnItem(modifier: Modifier, name: String, context: Context){
+fun TermColumnItem(modifier: Modifier, courseName: String, context: Context, termName: String){
     Card(
         modifier
             .padding(6.dp)
@@ -120,13 +117,16 @@ fun ColumnItem(modifier: Modifier, name: String, context: Context){
     ){
         Button(
             onClick = {
-                context.startActivity(Intent(context, CourseManagementActivity::class.java))
+                val intent = Intent(context, CourseManagementActivity::class.java)
+                intent.putExtra("TERM_NAME", termName) // Passing the term name
+                intent.putExtra("COURSE_NAME", courseName) // Passing the course name
+                context.startActivity(intent)
             },
             modifier = Modifier
                 .padding(10.dp)
                 .fillMaxSize(),
         ){
-            Text(text = name, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text(text = courseName, fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
     }
 }

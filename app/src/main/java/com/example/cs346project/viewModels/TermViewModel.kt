@@ -22,11 +22,38 @@ class TermViewModel : ViewModel() {
     private val _termsState = MutableStateFlow<List<String>>(emptyList())
     val termsState = _termsState.asStateFlow()
 
-    suspend fun fetchCoursesForTerm(termUUID: String) {
+    fun fetchTermUUIDFromName(termName: String, onResult: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val user = auth.currentUser
+                if (user != null) {
+                    // Query to find the term UUID based on term name
+                    val termQuerySnapshot = db
+                        .collection("Users")
+                        .document(user.uid)
+                        .collection("Terms")
+                        .whereEqualTo("name", termName) // Assuming 'name' is the field for term name
+                        .get()
+                        .await()
+
+                    // Assuming that term names are unique and there's only one document
+                    val termUUID = termQuerySnapshot.documents.firstOrNull()?.id
+                    if (termUUID != null) {
+                        onResult(termUUID)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun fetchCoursesForTerm(termUUID: String) {
         viewModelScope.launch {
             val user = auth.currentUser
             if (user != null) {
-                val documents = db.collection("Users")
+                val documents = db
+                    .collection("Users")
                     .document(user.uid)
                     .collection("Terms")
                     .document(termUUID)
@@ -57,19 +84,6 @@ class TermViewModel : ViewModel() {
     }
 
     fun addTerm(termName: String) {
-        // Temporarily hardcoding the term UUID - "Fall 2023" in db (user test4)
-        // Every course added will go under the Fall 2023 term for user test4
-//        val currentTermUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05"
-
-        // Real functionality is when the user is on the term page and clicks on add course
-        // it will navigate to this activity where the user can search for their course
-        // and add the course to the term page
-        // workflow: user signs in, goes to term page, clicks on add course, gets navigated to this page
-        // in the "add course" button on the term page, it should setCurrentTermUUID
-        // and we can get rid of the above line
-
-//        val courseUUID = UUID.randomUUID().toString()
-//        val currentCourseUUID = courseUUID
         val termUUID = UUID.randomUUID().toString()
 
         val db = FirebaseFirestore.getInstance()
