@@ -15,11 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Button
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -56,8 +58,22 @@ fun CurrentTermPage(modifier: Modifier) {
         viewModel.fetchCoursesForTerm("5ee51a2c-022a-46f5-851e-558ad9a14a05")
     }
 
-    // Need to change the hardcoded "Fall 2023" and UUID above
+    // Need to change the UUID above
 
+    val context = LocalContext.current
+    IconButton(
+        onClick = {
+            context.startActivity(Intent(context, HomepageActivity::class.java))
+        },
+        modifier = Modifier.height(60.dp)
+    ) {
+        androidx.compose.material.Icon(
+            imageVector = Icons.Default.KeyboardArrowLeft,
+            contentDescription = "Close"
+        )
+    }
+
+    // Need to change the hardcoded "Fall 2023"
     Text("Fall 2023", color = Color.Gray, fontSize = 22.sp,fontWeight = FontWeight.Bold,
         modifier = Modifier
             .fillMaxWidth()
@@ -66,27 +82,24 @@ fun CurrentTermPage(modifier: Modifier) {
     Column(modifier
         .fillMaxWidth()
         .fillMaxHeight()
-        .padding(horizontal = 20.dp, vertical = 50.dp)
+        .padding(horizontal = 40.dp, vertical = 70.dp)
     ){
-        val context = LocalContext.current
-        androidx.compose.material.IconButton(
-            onClick = {
-                context.startActivity(Intent(context, HomepageActivity::class.java))
-            },
-            modifier = Modifier.align(Alignment.Start)
-        ) {
-            androidx.compose.material.Icon(
-                imageVector = Icons.Default.KeyboardArrowLeft,
-                contentDescription = "Close"
-            )
-        }
 
-        LazyColumn(){
+        LazyColumn(Modifier.weight(1f)){
             items(items = coursesState.value){ item->
                 ColumnItem(modifier = modifier, name = item)
             }
         }
 
+        Button(
+            onClick = {
+                context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp)) {
+            Text("Add Course") // Temporary (Needs to be in term page)
+        }
 
     }
 }

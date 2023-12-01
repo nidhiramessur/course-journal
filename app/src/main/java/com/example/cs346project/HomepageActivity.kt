@@ -78,11 +78,6 @@ fun Homepage() {
             Text("Demo Backend") // Temporary (Needs to be in term page)
         }
         Button(onClick = {
-            context.startActivity(Intent(context, CurrentTermActivity::class.java))
-        }) {
-            Text("Current Term")
-        }
-        Button(onClick = {
             context.startActivity(Intent(context, NotesActivity::class.java))
         }) {
             Text("Notes")
