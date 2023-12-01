@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import com.example.cs346project.models.Note
-
+import java.util.UUID
 
 
 class NotesViewModel : ViewModel() {
@@ -37,7 +37,7 @@ class NotesViewModel : ViewModel() {
                 val notesList = documents.documents.mapNotNull {document ->
                     val data = document.getString("data")
                     val nuid = document.getString("nuid")
-                    data?.let { Note(data, nuid?:"") }
+                    data?.let { Note(data, nuid ?: "") }
                 }
 
                 _notesState.value = notesList
@@ -45,5 +45,27 @@ class NotesViewModel : ViewModel() {
         }
     }
 
-    fun addNote(termUUID: String, CourseUUID: String, note:String){}
+    fun addNote(termUUID: String, CourseUUID: String,note: String){
+        viewModelScope.launch {
+            val user = auth.currentUser
+            if (user != null) {
+                val notesUID = UUID.randomUUID().toString()
+                try {
+                    val mynote = mapOf("data" to note, "nuid" to notesUID)
+
+                    db.collection("Users")
+                        .document(user.uid)
+                        .collection("Terms")
+                        .document(termUUID)
+                        .collection("Courses")
+                        .document(CourseUUID)
+                        .collection("Notes")
+                        .add(mynote)
+                        .await()
+                } catch (e: Exception){
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
 }

@@ -161,7 +161,7 @@ fun AddNewNote(onDismiss: () -> Unit, onSave: (String) -> Unit){
                     value = noteData,
                     onValueChange = { noteData = it },
                     label = { Text("Enter note here") },
-                    modifier = Modifier.fillMaxWidth().height(200.dp)
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Row(
                     modifier = Modifier
