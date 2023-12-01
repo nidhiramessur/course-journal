@@ -68,4 +68,5 @@ class NotesViewModel : ViewModel() {
             }
         }
     }
+    fun updateNote(termUUID: String, CourseUUID: String,note: Note){}
 }
