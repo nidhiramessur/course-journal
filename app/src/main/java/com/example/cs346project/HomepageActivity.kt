@@ -48,7 +48,7 @@ fun Homepage() {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(120.dp),
+            .padding(vertical = 120.dp),
         verticalArrangement = Arrangement.Bottom
     ){
         val context = LocalContext.current
@@ -61,8 +61,7 @@ fun Homepage() {
         Button(
             onClick = {
                 context.startActivity(Intent(context, SearchTermActivity::class.java))
-            },
-            modifier = Modifier.fillMaxWidth()) {
+            }) {
             Text("Search or Add Term")
         }
         Button(onClick = {
@@ -78,7 +77,7 @@ fun Homepage() {
         Button(onClick = {
             context.startActivity(Intent(context, NotesActivity::class.java))
         }) {
-            Text("Notes")
+            Text("Notes") // Temporary (Needs to be in course management page)
         }
         Button(onClick = {
             // Log out the user
