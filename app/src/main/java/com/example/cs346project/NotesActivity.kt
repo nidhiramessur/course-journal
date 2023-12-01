@@ -135,6 +135,12 @@ fun Notes(modifier: Modifier) {
                 "f1763f11-625f-434d-9af7-85cdedd10117",newnote)
                 noteSelected = null
                 refresh++
+            },
+            onDelete = {delNote ->
+                viewModel.deleteNote(termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05", CourseUUID =
+                "f1763f11-625f-434d-9af7-85cdedd10117",delNote)
+                noteSelected = null
+                refresh++
             }
         )
     }
@@ -235,7 +241,8 @@ fun ColumnI(modifier:Modifier, name: String, onClick: () ->Unit){
 }
 
 @Composable
-fun NoteDetails(note: Note, onDismiss: () -> Unit, onUpdate: (Note) -> Unit) {
+fun NoteDetails(note: Note, onDismiss: () -> Unit, onUpdate: (Note) -> Unit,
+                onDelete: (Note) -> Unit) {
     var newNoteData by remember {
         mutableStateOf(note.data)
     }
@@ -288,7 +295,7 @@ fun NoteDetails(note: Note, onDismiss: () -> Unit, onUpdate: (Note) -> Unit) {
                     }
 
                     TextButton(onClick = {
-                        // ADD HERE
+                        onDelete(note)
                     }) {
                         Text("Delete", color = Color.Red, fontWeight = FontWeight.Bold)
                     }
