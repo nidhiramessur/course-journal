@@ -62,7 +62,6 @@ class SearchTermActivity : AppCompatActivity() {
         var selectedTerm by remember { mutableStateOf("") }
         var newTerm by remember { mutableStateOf("") }
 
-        // uncomment once firestore is up
         LaunchedEffect(true) {
             viewModel.fetchTerms()
         }
@@ -175,7 +174,6 @@ class SearchTermActivity : AppCompatActivity() {
                 expanded = expandedState,
                 onDismissRequest = { expandedState = false }) {
 
-                // replace next line once firestore is up
                 termsList.forEach{
                     eachOption -> DropdownMenuItem(onClick = { 
                     selectedOption = eachOption

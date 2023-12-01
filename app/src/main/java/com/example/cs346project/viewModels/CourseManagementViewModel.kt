@@ -18,31 +18,73 @@ class CourseManagementViewModel : ViewModel() {
     private val _courseInfoState = MutableStateFlow<List<CourseInfoDbData>>(emptyList())
     val courseInfoState = _courseInfoState.asStateFlow()
 
-    suspend fun fetchCourseInfo(termUUID: String, courseUUID: String) {
+    private suspend fun fetchTermUUIDByName(termName: String): String? {
+        val user = auth.currentUser
+        if (user != null) {
+            val termQuerySnapshot = db
+                .collection("Users")
+                .document(user.uid)
+                .collection("Terms")
+                .whereEqualTo("name", termName)
+                .get()
+                .await()
+
+            return termQuerySnapshot.documents.firstOrNull()?.id
+        }
+        return null
+    }
+
+    private suspend fun fetchCourseUUIDByName(termUUID: String, courseName: String): String? {
+        val user = auth.currentUser
+        if (user != null) {
+            val courseQuerySnapshot = db
+                .collection("Users")
+                .document(user.uid)
+                .collection("Terms")
+                .document(termUUID)
+                .collection("Courses")
+                .whereEqualTo("name", courseName)
+                .get()
+                .await()
+
+            return courseQuerySnapshot.documents.firstOrNull()?.id
+        }
+
+        return null
+    }
+
+
+    suspend fun fetchCourseInfo(termName: String, courseName: String) {
         viewModelScope.launch {
             try {
                 val user = auth.currentUser
                 if (user != null) {
-                    // Fetch a single document from Firestore
-                    val documentSnapshot = db
-                        .collection("Users")
-                        .document(user.uid)
-                        .collection("Terms")
-                        .document(termUUID)
-                        .collection("Courses")
-                        .document(courseUUID)
-                        .get()
-                        .await()
+                    val termUUID = fetchTermUUIDByName(termName)
+                    if (termUUID != null) {
+                        val courseUUID = fetchCourseUUIDByName(termUUID, courseName)
+                        if (courseUUID != null) {
+                            // Fetch a single document from Firestore
+                            val documentSnapshot = db
+                                .collection("Users")
+                                .document(user.uid)
+                                .collection("Terms")
+                                .document(termUUID)
+                                .collection("Courses")
+                                .document(courseUUID)
+                                .get()
+                                .await()
 
-                    // Check if the document exists and map it to CourseInfoDbData object
-                    val courseInfo: CourseInfoDbData? = if (documentSnapshot.exists()) {
-                        documentSnapshot.toObject(CourseInfoDbData::class.java)
-                    } else {
-                        null
+                            // Check if the document exists and map it to CourseInfoDbData object
+                            val courseInfo: CourseInfoDbData? = if (documentSnapshot.exists()) {
+                                documentSnapshot.toObject(CourseInfoDbData::class.java)
+                            } else {
+                                null
+                            }
+
+                            // Update the state; if the course is not found, update with an empty list or handle accordingly
+                            _courseInfoState.value = courseInfo?.let { listOf(it) } ?: emptyList()
+                        }
                     }
-
-                    // Update the state; if the course is not found, update with an empty list or handle accordingly
-                    _courseInfoState.value = courseInfo?.let { listOf(it) } ?: emptyList()
                 }
             } catch (e: Exception) {
                 // Handle exceptions such as network issues or Firebase errors

@@ -41,27 +41,28 @@ class CourseManagementActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val termName = intent.getStringExtra("TERM_NAME") // Retrieve the term name
         val courseName = intent.getStringExtra("COURSE_NAME") // Retrieve the course name
+        Log.d("TERM_NAME", termName?:"")
+        Log.d("COURSE_NAME", courseName?:"")
 
         setContent{
-            CourseInfo(courseName ?: "") // Pass the course name to the composable
+            CourseInfo(termName?:"", courseName ?: "") // Pass the course name to the composable
         }
     }
 
 }
 
 @Composable
-fun CourseInfo(courseName: String) {
+fun CourseInfo(termName:String, courseName: String) {
 
     val viewModel: CourseManagementViewModel = viewModel()
     val courseInfoState = viewModel.courseInfoState.collectAsState()
-    val termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05"
-    val courseUUID = "3cd879a8-247c-4978-ad2c-e963bfe583d1"
     var isLoading by remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = termUUID, key2 = courseUUID) {
+    LaunchedEffect(key1 = termName, key2 = courseName) {
         isLoading = true
-        viewModel.fetchCourseInfo(termUUID, courseUUID)
+        viewModel.fetchCourseInfo(termName, courseName)
         isLoading = false
     }
 
@@ -77,7 +78,11 @@ fun CourseInfo(courseName: String) {
         IconButton(
             onClick = {
                 // Need to add logic to return to current term or term activity
-                context.startActivity(Intent(context, CurrentTermActivity::class.java))
+                val intent = Intent(context, TermActivity::class.java)
+                intent.putExtra("SELECTED_TERM", termName)
+                intent.putExtra("TERM_NAME", termName) // Passing the term name
+                intent.putExtra("COURSE_NAME", courseName) // Passing the course name
+                context.startActivity(intent)
             },
             modifier = Modifier.align(Alignment.Start)
         ) {

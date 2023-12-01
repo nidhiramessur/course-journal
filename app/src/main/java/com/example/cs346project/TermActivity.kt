@@ -58,13 +58,12 @@ class TermActivity : AppCompatActivity() {
 fun TermPage(term: String, modifier: Modifier) {
     val viewModel: TermViewModel = viewModel()
     val coursesState = viewModel.coursesState.collectAsState()
+
     LaunchedEffect(true) {
         viewModel.fetchTermUUIDFromName(term) { termUUID ->
             viewModel.fetchCoursesForTerm(termUUID)
         }
     }
-
-    // Need to change the UUID above
 
     val context = LocalContext.current
     IconButton(
@@ -79,12 +78,13 @@ fun TermPage(term: String, modifier: Modifier) {
         )
     }
 
-    // Need to change the hardcoded "Fall 2023"
-    Text(term, color = Color.Gray, fontSize = 27.sp,fontWeight = FontWeight.Bold,
+    Text(
+        term, color = Color.Gray, fontSize = 27.sp, fontWeight = FontWeight.Bold,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 120.dp, vertical = 20.dp),
-        textAlign = TextAlign.Center)
+        textAlign = TextAlign.Center
+    )
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -95,7 +95,7 @@ fun TermPage(term: String, modifier: Modifier) {
 
         LazyColumn(Modifier.weight(1f)){
             items(items = coursesState.value){ item->
-                TermColumnItem(modifier = modifier, name = item, context)
+                TermColumnItem(modifier = modifier, courseName = item, context, termName = term)
             }
         }
 
@@ -103,7 +103,7 @@ fun TermPage(term: String, modifier: Modifier) {
 }
 
 @Composable
-fun TermColumnItem(modifier: Modifier, name: String, context: Context){
+fun TermColumnItem(modifier: Modifier, courseName: String, context: Context, termName: String){
     Card(
         modifier
             .padding(6.dp)
@@ -118,14 +118,15 @@ fun TermColumnItem(modifier: Modifier, name: String, context: Context){
         Button(
             onClick = {
                 val intent = Intent(context, CourseManagementActivity::class.java)
-                intent.putExtra("COURSE_NAME", name) // Passing the course name
+                intent.putExtra("TERM_NAME", termName) // Passing the term name
+                intent.putExtra("COURSE_NAME", courseName) // Passing the course name
                 context.startActivity(intent)
             },
             modifier = Modifier
                 .padding(10.dp)
                 .fillMaxSize(),
         ){
-            Text(text = name, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text(text = courseName, fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
