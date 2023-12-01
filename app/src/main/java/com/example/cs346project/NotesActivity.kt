@@ -280,7 +280,7 @@ fun NoteDetails(note: Note, onDismiss: () -> Unit, onUpdate: (Note) -> Unit) {
                         val newNote = note.copy(data = newNoteData)
                         onUpdate(newNote)
                     }) {
-                        Text("Update")
+                        Text("Update", fontWeight = FontWeight.Bold)
                     }
 
                     TextButton(onClick = { onDismiss() }) {
@@ -288,9 +288,9 @@ fun NoteDetails(note: Note, onDismiss: () -> Unit, onUpdate: (Note) -> Unit) {
                     }
 
                     TextButton(onClick = {
-                        // ADD here
+                        // ADD HERE
                     }) {
-                        Text("Delete")
+                        Text("Delete", color = Color.Red, fontWeight = FontWeight.Bold)
                     }
                 }
 
