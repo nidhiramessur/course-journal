@@ -124,6 +124,4 @@ fun Application.configureRouting() {
         }
 
     }
-
-
 }

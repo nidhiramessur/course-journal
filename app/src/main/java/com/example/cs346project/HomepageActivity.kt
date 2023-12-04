@@ -3,42 +3,43 @@ package com.example.cs346project
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.cs346project.viewModels.NavigationViewModel
 
 
-class HomepageActivity : AppCompatActivity() {
 
+class HomepageActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent{
-            Homepage()
+        setContent {
+            val selectedItem = NavigationViewModel.selectedItem.value
+            BaseScreen(selectedItem, onItemSelected = { index ->
+                NavigationViewModel.selectedItem.value = index
+            }) {
+                HomePageContent()
+            }
         }
-
     }
-
 }
 
 
 
+
 @Composable
-fun Homepage() {
+fun HomePageContent() {
     Text("Course Journal", color = Color.LightGray, fontSize = 40.sp,
         modifier = Modifier
             .fillMaxWidth()
@@ -106,3 +107,6 @@ fun Homepage() {
         }
     }
 }
+
+
+
