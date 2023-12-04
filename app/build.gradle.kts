@@ -73,6 +73,9 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.compose.ui:ui:1.0.5")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
+    implementation("io.ktor:ktor-client-core:1.6.7") // Use the latest version
+    implementation("io.ktor:ktor-client-android:1.6.7") // For Android
+
 
 }
 

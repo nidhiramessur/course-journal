@@ -22,6 +22,24 @@ class TermViewModel : ViewModel() {
     private val _termsState = MutableStateFlow<List<String>>(emptyList())
     val termsState = _termsState.asStateFlow()
 
+    fun updateUserCurrentTerm(termUUID: String) {
+        viewModelScope.launch {
+            val user = auth.currentUser
+            if (user != null) {
+                db.collection("Users").document(user.uid)
+                    .update("currentTerm", termUUID)
+                    .addOnSuccessListener {
+                        Log.d("Firestore", "Successfully updated current term to $termUUID")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w("Firestore", "Error updating current term", e)
+                    }
+            } else {
+                Log.w("TermViewModel", "No authenticated user found")
+            }
+        }
+    }
+
     fun fetchTermUUIDFromName(termName: String, onResult: (String) -> Unit) {
         viewModelScope.launch {
             try {
