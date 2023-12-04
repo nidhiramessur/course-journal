@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -35,20 +34,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cs346project.viewModels.TermViewModel
+import com.example.cs346project.viewModels.NavigationViewModel
 
 
-class CurrentTermActivity : AppCompatActivity() {
+class CurrentTermActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent{
-            CurrentTermPage(modifier = Modifier)
+         setContent {
+            val selectedItem = NavigationViewModel.selectedItem.value
+            BaseScreen(selectedItem, onItemSelected = { index ->
+                NavigationViewModel.selectedItem.value = index
+            }) {
+                CurrentTermPage(modifier = Modifier)
+            }
         }
-
     }
-
 }
+
 
 @Composable
 fun CurrentTermPage(modifier: Modifier) {
