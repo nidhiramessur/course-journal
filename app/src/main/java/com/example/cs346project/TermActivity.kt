@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -36,9 +35,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cs346project.viewModels.TermViewModel
+import com.example.cs346project.viewModels.NavigationViewModel
 
 
-class TermActivity : AppCompatActivity() {
+class TermActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,12 +47,16 @@ class TermActivity : AppCompatActivity() {
 
         Log.d("SELECTED_TERM", term?:"")
         setContent{
-            TermPage(term?: "", modifier = Modifier)
+            val selectedItem = NavigationViewModel.selectedItem.value            
+            BaseScreen(selectedItem, onItemSelected = { index ->
+                NavigationViewModel.selectedItem.value = index
+            }) { 
+                TermPage(term ?: "", modifier = Modifier)
         }
-
     }
-
+    }
 }
+
 
 @Composable
 fun TermPage(term: String, modifier: Modifier) {

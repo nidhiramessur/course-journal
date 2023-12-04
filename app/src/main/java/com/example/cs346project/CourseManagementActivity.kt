@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -35,8 +34,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cs346project.viewModels.CourseManagementViewModel
+import com.example.cs346project.viewModels.NavigationViewModel
 
-class CourseManagementActivity: AppCompatActivity() {
+
+class CourseManagementActivity: BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,12 +47,17 @@ class CourseManagementActivity: AppCompatActivity() {
         Log.d("TERM_NAME", termName?:"")
         Log.d("COURSE_NAME", courseName?:"")
 
-        setContent{
-            CourseInfo(termName?:"", courseName ?: "") // Pass the course name to the composable
+         setContent {
+            val selectedItem = NavigationViewModel.selectedItem.value
+            BaseScreen(selectedItem, onItemSelected = { index ->
+                NavigationViewModel.selectedItem.value = index
+            }) {
+                CourseInfo(termName ?: "", courseName ?: "")
+            }
         }
     }
-
 }
+
 
 @Composable
 fun CourseInfo(termName:String, courseName: String) {
