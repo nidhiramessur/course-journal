@@ -132,45 +132,45 @@ fun UserSignupScreen() {
     val auth = FirebaseAuth.getInstance()
 
     Button(onClick = {
-        if (password == confirmPassword) {
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // Once the user is authenticated, save their data to Firestore
-                        val db = FirebaseFirestore.getInstance()
-                        val user = auth.currentUser
-                        val userMap = hashMapOf(
-                            "UUID" to user?.uid,
-                            "email" to email,
-                            "username" to username
-                        )
-                        
-                        user?.let {
-                            db.collection("Users").document(it.uid)
-                                .set(userMap)
-                                .addOnSuccessListener {
-                                    context.startActivity(Intent(context, HomepageActivity::class.java))
-                                }
-                                .addOnFailureListener { e ->
-                                    Log.w("Firestore", "Error adding document", e)
-                                    // Consider adding a Composable to display an error message
-                                }
-                        }
-                    } else {
-                        // Handle failure
-                        Log.w("FirebaseAuth", "createUserWithEmail:failure", task.exception)
-                        // Consider adding a Composable to display an error message
+    if (password == confirmPassword) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Once the user is authenticated, save their data to Firestore
+                    val db = FirebaseFirestore.getInstance()
+                    val user = auth.currentUser
+                    val userMap = hashMapOf(
+                        "UUID" to user?.uid,
+                        "email" to email,
+                        "username" to username,
+                        "currentTerm" to "" // Initially setting currentTerm to an empty string
+                    )
+                    
+                    user?.let {
+                        db.collection("Users").document(it.uid)
+                            .set(userMap)
+                            .addOnSuccessListener {
+                                context.startActivity(Intent(context, HomepageActivity::class.java))
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("Firestore", "Error adding document", e)
+                                // Consider adding a Composable to display an error message
+                            }
                     }
+                } else {
+                    // Handle failure
+                    Log.w("FirebaseAuth", "createUserWithEmail:failure", task.exception)
+                    // Consider adding a Composable to display an error message
                 }
-        } else {
-            // Handle password mismatch
-            Log.d("UserSignup", "Passwords do not match!")
-            // Consider adding a Composable to display an error message
-        }
-    }, modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
-        Text("Sign Up")
+            }
+    } else {
+        // Handle password mismatch
+        Log.d("UserSignup", "Passwords do not match!")
+        // Consider adding a Composable to display an error message
     }
-
+}, modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
+    Text("Sign Up")
 }
+    }
 }
 

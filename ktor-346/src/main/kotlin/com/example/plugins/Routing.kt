@@ -53,65 +53,75 @@ fun Application.configureRouting() {
             }
         }
 
-        get("/users/{userId}/username") {
-            val userId = call.parameters["userId"] ?: return@get call.respondText("User ID is required", status = HttpStatusCode.BadRequest)
+        get("/users/{userId}/terms/uuid/{termName}") {
+            val userId = call.parameters["userId"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+            val termName = call.parameters["termName"] ?: return@get call.respond(HttpStatusCode.BadRequest)
 
             try {
                 val firestore = FirestoreClient.getFirestore()
-                val userDocument = firestore.collection("Users").document(userId).get().get()
-                val username = userDocument.getString("username") ?: "Username not found"
-
-                call.respondText("Username: $username", status = HttpStatusCode.OK)
+                val termQuerySnapshot = firestore.collection("Users").document(userId)
+                    .collection("Terms").whereEqualTo("name", termName).get().get()
+                
+                val termUUID = termQuerySnapshot.documents.firstOrNull()?.id
+                if (termUUID != null) {
+                    call.respondText(termUUID)
+                } else {
+                    call.respondText("Term not found", status = HttpStatusCode.NotFound)
+                }
             } catch (e: Exception) {
-                application.log.error("Error fetching username for user $userId", e)
-                call.respondText("Error fetching username: ${e.message}", status = HttpStatusCode.InternalServerError)
+                application.log.error("Error fetching term UUID for term name $termName", e)
+                call.respondText("Error fetching term UUID: ${e.message}", status = HttpStatusCode.InternalServerError)
             }
         }
 
-        // Route to fetch the email of a user
-        get("/users/{userId}/email") {
-            val userId = call.parameters["userId"] ?: return@get call.respondText("User ID is required", status = HttpStatusCode.BadRequest)
+        // Route to fetch the Course UUID by its name
+        get("/users/{userId}/terms/{termId}/courses/uuid/{courseName}") {
+            val userId = call.parameters["userId"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+            val termId = call.parameters["termId"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+            val courseName = call.parameters["courseName"] ?: return@get call.respond(HttpStatusCode.BadRequest)
 
             try {
-                val userRecord = FirebaseAuth.getInstance().getUser(userId)
-                val email = userRecord.email ?: "Email not found"
+                val firestore = FirestoreClient.getFirestore()
+                val courseQuerySnapshot = firestore.collection("Users").document(userId)
+                    .collection("Terms").document(termId)
+                    .collection("Courses").whereEqualTo("name", courseName).get().get()
 
-                call.respondText("Email: $email", status = HttpStatusCode.OK)
+                val courseUUID = courseQuerySnapshot.documents.firstOrNull()?.id
+                if (courseUUID != null) {
+                    call.respondText(courseUUID)
+                } else {
+                    call.respondText("Course not found", status = HttpStatusCode.NotFound)
+                }
             } catch (e: Exception) {
-                application.log.error("Error fetching email for user $userId", e)
-                call.respondText("Error fetching email: ${e.message}", status = HttpStatusCode.InternalServerError)
-            }
+                application.log.error("Error fetching course UUID for course name $courseName", e)
+                call.respondText("Error fetching course UUID: ${e.message}", status = HttpStatusCode.InternalServerError)
             }
         }
 
-        post("/signup") {
-            val (email, password) = call.receive<Pair<String, String>>()
+        get("/users/{userId}/terms/{termId}/courses/{courseId}/info") {
+            val userId = call.parameters["userId"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+            val termId = call.parameters["termId"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+            val courseId = call.parameters["courseId"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+
             try {
-                val userRecord = FirebaseAuth.getInstance().createUser(CreateRequest()
-                    .setEmail(email)
-                    .setPassword(password)
-                )
-                // Additional Firestore data storage can be added here if required
-                call.respondText("Signup successful: ${userRecord.uid}", status = HttpStatusCode.OK)
+                val firestore = FirestoreClient.getFirestore()
+                val documentSnapshot = firestore.collection("Users").document(userId)
+                    .collection("Terms").document(termId)
+                    .collection("Courses").document(courseId).get().get()
+
+                if (documentSnapshot.exists()) {
+                    // The server would return a string that includes all the fields of the CourseInfoDbData
+                    // joined by a separator, such as a pipe character '|'
+                    val courseData = documentSnapshot.data?.map { "${it.key}:${it.value}" }?.joinToString("|")
+                    call.respondText(courseData ?: "Data not found")
+                } else {
+                    call.respondText("Course not found", status = HttpStatusCode.NotFound)
+                }
             } catch (e: Exception) {
-                application.log.error("Signup failed", e)
-                call.respondText("Signup failed: ${e.message}", status = HttpStatusCode.InternalServerError)
+                application.log.error("Failed to fetch course info", e)
+                call.respondText("Failed to fetch course info: ${e.message}", status = HttpStatusCode.InternalServerError)
             }
         }
 
-        // Route for user login
-        post("/login") {
-            val (email, password) = call.receive<Pair<String, String>>()
-            try {
-                // Firebase Authentication logic for login
-                val userRecord = FirebaseAuth.getInstance().getUserByEmail(email)
-                // Here you can validate the password (this part is not straightforward with Firebase, usually handled on the client side)
-                // For now, assuming password check is done, return success response
-                call.respondText("Login successful: ${userRecord.uid}", status = HttpStatusCode.OK)
-            } catch (e: Exception) {
-                application.log.error("Login failed", e)
-                call.respondText("Login failed: ${e.message}", status = HttpStatusCode.InternalServerError)
-            }
-        }
     }
 }
