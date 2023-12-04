@@ -177,7 +177,12 @@ fun CourseInfo(termName:String, courseName: String) {
 
         Button(
             onClick = {
-                context.startActivity(Intent(context, ToDoListActivity::class.java)) },
+                val intent = Intent(context, ToDoListActivity::class.java)
+                intent.putExtra("SELECTED_TERM", termName)
+                intent.putExtra("TERM_NAME", termName) // Passing the term name
+                intent.putExtra("COURSE_NAME", courseName) // Passing the course name
+                context.startActivity(intent)
+                      },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 30.dp)

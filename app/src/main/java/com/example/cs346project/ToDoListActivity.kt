@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -23,7 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
+import com.example.cs346project.models.TodoItem
+import com.example.cs346project.viewModels.TodoViewModel
 
 class ToDoListActivity : AppCompatActivity() {
     private val viewModel: TodoViewModel by viewModels()
@@ -36,18 +38,20 @@ class ToDoListActivity : AppCompatActivity() {
     }
 }
 
-class TodoViewModel : ViewModel() {
-    var todos by mutableStateOf(listOf<String>())
-        private set
-
-    fun addTodo(todo: String) {
-        todos = todos + todo
-    }
-}
-
 @Composable
 fun TodoListScreen(viewModel: TodoViewModel) {
     var newTodoText by remember { mutableStateOf("") }
+
+    // TEMPORARY
+    val termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05"
+    val courseUUID = "3cd879a8-247c-4978-ad2c-e963bfe583d1"
+
+    // Fetch todoList when the screen is first loaded
+    LaunchedEffect(Unit) {
+        viewModel.fetchTodoList(termUUID, courseUUID)
+    }
+
+    val todoList = viewModel.todoState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -57,7 +61,12 @@ fun TodoListScreen(viewModel: TodoViewModel) {
         val context = LocalContext.current
         IconButton(
             onClick = {
-                context.startActivity(Intent(context, CourseManagementActivity::class.java))
+                // NEED TO CHANGE
+                val intent = Intent(context, CourseManagementActivity::class.java)
+                intent.putExtra("SELECTED_TERM", "Fall 2023")
+                intent.putExtra("TERM_NAME", "Fall 2023") // Passing the term name
+                intent.putExtra("COURSE_NAME", "CS346") // Passing the course name
+                context.startActivity(intent)
             },
             modifier = Modifier.align(Alignment.Start)
         ) {
@@ -85,8 +94,10 @@ fun TodoListScreen(viewModel: TodoViewModel) {
         // Add Button
         Button(
             onClick = {
-                viewModel.addTodo(newTodoText)
-                newTodoText = ""
+                if(newTodoText.isNotBlank()) {
+                    viewModel.addTodoToFirestore(termUUID, courseUUID, newTodoText, false)
+                    newTodoText = "" // Reset the input field
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,21 +109,30 @@ fun TodoListScreen(viewModel: TodoViewModel) {
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            this.items(viewModel.todos) { todo ->
-                TodoItem(todo = todo)
+            items(todoList.value) { todoItem ->
+                    TodoItem(todo = todoItem, onCompletionToggle = { todo ->
+                        viewModel.updateTodoCompletion(termUUID, courseUUID, todo, !todo.completed)
+                    })
             }
         }
     }
 }
 
 @Composable
-fun TodoItem(todo: String) {
+fun TodoItem(todo: TodoItem, onCompletionToggle: (TodoItem) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Text(text = todo, fontSize = 16.sp, modifier = Modifier.weight(1f))
-        // Need to add a button here for marking tasks as completed or deleting them.
+        Text(text = todo.title, fontSize = 16.sp, modifier = Modifier.weight(1f))
+        Button(
+            onClick = { onCompletionToggle(todo) },
+            // Modify the button appearance based on the completion status
+            colors = if (todo.completed) ButtonDefaults.buttonColors(backgroundColor = Color.Green)
+            else ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+        ) {
+            Text(if (todo.completed) "Completed" else "Complete")
+        }
     }
 }

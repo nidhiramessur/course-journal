@@ -91,4 +91,26 @@ class NotesViewModel : ViewModel() {
             }
         }
     }
+
+    fun deleteNote(termUUID: String, CourseUUID: String,note: Note) {
+        viewModelScope.launch {
+            val user = auth.currentUser
+            if (user != null) {
+                try {
+                    db.collection("Users")
+                        .document(user.uid)
+                        .collection("Terms")
+                        .document(termUUID)
+                        .collection("Courses")
+                        .document(CourseUUID)
+                        .collection("Notes")
+                        .document(note.nuid)
+                        .delete()
+                        .await()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
 }
