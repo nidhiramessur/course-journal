@@ -24,31 +24,44 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cs346project.models.TodoItem
+import com.example.cs346project.viewModels.CourseManagementViewModel
 import com.example.cs346project.viewModels.TodoViewModel
+import kotlinx.coroutines.launch
 
 class ToDoListActivity : AppCompatActivity() {
     private val viewModel: TodoViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val termName = intent.getStringExtra("TERM_NAME") // Retrieve the term name
+        val courseName = intent.getStringExtra("COURSE_NAME") // Retrieve the course name
         setContent {
-            TodoListScreen(viewModel)
+            TodoListScreen(viewModel, termName ?: "", courseName ?: "")
         }
     }
 }
 
 @Composable
-fun TodoListScreen(viewModel: TodoViewModel) {
+fun TodoListScreen(viewModel: TodoViewModel, termName:String, courseName: String) {
     var newTodoText by remember { mutableStateOf("") }
 
     // TEMPORARY
-    val termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05"
-    val courseUUID = "3cd879a8-247c-4978-ad2c-e963bfe583d1"
+//    val termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05"
+//    val courseUUID = "3cd879a8-247c-4978-ad2c-e963bfe583d1"
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val courseViewModel: CourseManagementViewModel = viewModel()
 
     // Fetch todoList when the screen is first loaded
     LaunchedEffect(Unit) {
-        viewModel.fetchTodoList(termUUID, courseUUID)
+        val termUUID = courseViewModel.fetchTermUUIDByName(termName)
+        val courseUUID = termUUID?.let { courseViewModel.fetchCourseUUIDByName(it, courseName) }
+        if (termUUID != null && courseUUID != null) {
+            viewModel.fetchTodoList(termUUID, courseUUID)
+        }
     }
 
     val todoList = viewModel.todoState.collectAsState()
@@ -63,9 +76,9 @@ fun TodoListScreen(viewModel: TodoViewModel) {
             onClick = {
                 // NEED TO CHANGE
                 val intent = Intent(context, CourseManagementActivity::class.java)
-                intent.putExtra("SELECTED_TERM", "Fall 2023")
-                intent.putExtra("TERM_NAME", "Fall 2023") // Passing the term name
-                intent.putExtra("COURSE_NAME", "CS346") // Passing the course name
+                intent.putExtra("SELECTED_TERM", termName)
+                intent.putExtra("TERM_NAME", termName) // Passing the term name
+                intent.putExtra("COURSE_NAME", courseName) // Passing the course name
                 context.startActivity(intent)
             },
             modifier = Modifier.align(Alignment.Start)
@@ -95,8 +108,14 @@ fun TodoListScreen(viewModel: TodoViewModel) {
         Button(
             onClick = {
                 if(newTodoText.isNotBlank()) {
-                    viewModel.addTodoToFirestore(termUUID, courseUUID, newTodoText, false)
-                    newTodoText = "" // Reset the input field
+                    coroutineScope.launch {
+                        val termUUID = courseViewModel.fetchTermUUIDByName(termName)
+                        val courseUUID = termUUID?.let { courseViewModel.fetchCourseUUIDByName(it, courseName) }
+                        if (termUUID != null && courseUUID != null) {
+                            viewModel.addTodoToFirestore(termUUID, courseUUID, newTodoText, false)
+                        }
+                        newTodoText = "" // Reset the input field
+                    }
                 }
             },
             modifier = Modifier
@@ -111,7 +130,13 @@ fun TodoListScreen(viewModel: TodoViewModel) {
         ) {
             items(todoList.value) { todoItem ->
                     TodoItem(todo = todoItem, onCompletionToggle = { todo ->
-                        viewModel.updateTodoCompletion(termUUID, courseUUID, todo, !todo.completed)
+                        coroutineScope.launch {
+                            val termUUID = courseViewModel.fetchTermUUIDByName(termName)
+                            val courseUUID = termUUID?.let { courseViewModel.fetchCourseUUIDByName(it, courseName) }
+                            if (termUUID != null && courseUUID != null) {
+                                viewModel.updateTodoCompletion(termUUID, courseUUID, todo, !todo.completed)
+                            }
+                        }
                     })
             }
         }
