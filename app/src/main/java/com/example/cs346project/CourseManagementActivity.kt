@@ -135,10 +135,6 @@ fun CourseInfo(termName:String, courseName: String) {
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center)
 
-            // **can add complexity -
-            // it displays the lecture times and days that the student attends
-            // can make student choose lecture day/time when adding a course...
-
             if (courseDBData.lecturedatetime.isNotEmpty()) {
                 Text(text = "All lecture times:",
                     fontSize = 20.sp,

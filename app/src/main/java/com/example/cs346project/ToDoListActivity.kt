@@ -47,10 +47,6 @@ class ToDoListActivity : AppCompatActivity() {
 fun TodoListScreen(viewModel: TodoViewModel, termName:String, courseName: String) {
     var newTodoText by remember { mutableStateOf("") }
 
-    // TEMPORARY
-//    val termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05"
-//    val courseUUID = "3cd879a8-247c-4978-ad2c-e963bfe583d1"
-
     val coroutineScope = rememberCoroutineScope()
 
     val courseViewModel: CourseManagementViewModel = viewModel()

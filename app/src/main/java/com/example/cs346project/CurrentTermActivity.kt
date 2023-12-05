@@ -147,7 +147,6 @@ fun ColumnItem(courseName: String, context: Context, termName: String) {
     ) {
         Button(
             onClick = {
-//                context.startActivity(Intent(context, CourseManagementActivity::class.java))
                 val intent = Intent(context, CourseManagementActivity::class.java)
                 intent.putExtra("TERM_NAME", termName) // Passing the term name
                 intent.putExtra("COURSE_NAME", courseName) // Passing the course name

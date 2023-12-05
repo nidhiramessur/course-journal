@@ -18,10 +18,10 @@ import java.nio.charset.StandardCharsets
 
 class CourseManagementViewModel : ViewModel() {
 
-    public val httpClient = HttpClient()
-    public val auth = FirebaseAuth.getInstance()
+    val httpClient = HttpClient()
+    val auth = FirebaseAuth.getInstance()
 
-    public val _courseInfoState = MutableStateFlow<List<CourseInfoDbData>>(emptyList())
+    val _courseInfoState = MutableStateFlow<List<CourseInfoDbData>>(emptyList())
     val courseInfoState = _courseInfoState.asStateFlow()
 
     suspend fun fetchTermUUIDByName(termName: String): String? {
@@ -91,26 +91,21 @@ class CourseManagementViewModel : ViewModel() {
     }
 
 // Util function to parse the string response into CourseInfoDbData
-    public fun parseCourseInfoData(data: String): CourseInfoDbData {
-    val dataMap = data.split("|").associate {
-        val parts = it.split(":")
-        if (parts.size >= 2) parts[0] to parts[1] else parts[0] to ""
-    }
-    return CourseInfoDbData(
-        name = dataMap["name"].orEmpty(),
-        title = dataMap["title"].orEmpty(),
-        requirements = dataMap["requirements"].orEmpty(),
-        lecturedatetime = dataMap["lecturedatetime"].orEmpty(),
-        lecturelocation = dataMap["lecturelocation"].orEmpty(),
-        professorname = dataMap["professorname"].orEmpty(),
-        courserating = dataMap["courserating"].orEmpty(),
-        professorrating = dataMap["professorrating"].orEmpty(),
-        // Handle arrays like todo and notes
-        // todo = dataMap["todo"]?.split(",") ?: emptyList(),
-        // notes = dataMap["notes"]?.split(",") ?: emptyList(),
-        // UUID or any other fields can be added similarly
-        // UUID = dataMap["UUID"].orEmpty()
-    )
+    fun parseCourseInfoData(data: String): CourseInfoDbData {
+        val dataMap = data.split("|").associate {
+            val parts = it.split(":")
+            if (parts.size >= 2) parts[0] to parts[1] else parts[0] to ""
+        }
+        return CourseInfoDbData(
+            name = dataMap["name"].orEmpty(),
+            title = dataMap["title"].orEmpty(),
+            requirements = dataMap["requirements"].orEmpty(),
+            lecturedatetime = dataMap["lecturedatetime"].orEmpty(),
+            lecturelocation = dataMap["lecturelocation"].orEmpty(),
+            professorname = dataMap["professorname"].orEmpty(),
+            courserating = dataMap["courserating"].orEmpty(),
+            professorrating = dataMap["professorrating"].orEmpty(),
+        )
     }
 
 
