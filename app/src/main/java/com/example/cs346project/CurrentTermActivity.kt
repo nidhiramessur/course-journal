@@ -29,7 +29,7 @@ import com.example.cs346project.viewModels.TermViewModel
 import com.example.cs346project.viewModels.NavigationViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import android.util.Log;
+import android.util.Log
 
 class CurrentTermActivity : BaseActivity() {
 
@@ -116,7 +116,7 @@ fun CurrentTermPage() {
 
         LazyColumn(Modifier.weight(1f)) {
             items(items = coursesState.value) { course ->
-                ColumnItem(name = course, context = context)
+                ColumnItem(courseName = course, context = context, termName = currentTermTitle)
             }
         }
 
@@ -133,7 +133,7 @@ fun CurrentTermPage() {
 }
 
 @Composable
-fun ColumnItem(name: String, context: Context) {
+fun ColumnItem(courseName: String, context: Context, termName: String) {
     Card(
         modifier = Modifier
             .padding(6.dp)
@@ -147,13 +147,18 @@ fun ColumnItem(name: String, context: Context) {
     ) {
         Button(
             onClick = {
-                context.startActivity(Intent(context, CourseManagementActivity::class.java))
+//                context.startActivity(Intent(context, CourseManagementActivity::class.java))
+                val intent = Intent(context, CourseManagementActivity::class.java)
+                intent.putExtra("TERM_NAME", termName) // Passing the term name
+                intent.putExtra("COURSE_NAME", courseName) // Passing the course name
+                intent.putExtra("SOURCE_ACTIVITY", "CurrentTermActivity")
+                context.startActivity(intent)
             },
             modifier = Modifier
                 .padding(10.dp)
                 .fillMaxSize(),
         ) {
-            Text(text = name, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text(text = courseName, fontSize = 22.sp, fontWeight = FontWeight.Bold)
         }
     }
 }

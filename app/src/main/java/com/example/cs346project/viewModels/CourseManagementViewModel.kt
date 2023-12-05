@@ -1,20 +1,19 @@
 package com.example.cs346project.viewModels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cs346project.CourseInfoDbData
 import com.google.firebase.auth.FirebaseAuth
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
-import io.ktor.client.request.url
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.encodeURLPath
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import android.util.Log
 
 
 class CourseManagementViewModel : ViewModel() {
@@ -25,11 +24,13 @@ class CourseManagementViewModel : ViewModel() {
     public val _courseInfoState = MutableStateFlow<List<CourseInfoDbData>>(emptyList())
     val courseInfoState = _courseInfoState.asStateFlow()
 
-    public suspend fun fetchTermUUIDByName(termName: String): String? {
+    suspend fun fetchTermUUIDByName(termName: String): String? {
     val user = auth.currentUser
     if (user != null) {
         // Encode the termName and replace "+" with "%20"
-        val encodedTermName = URLEncoder.encode(termName, StandardCharsets.UTF_8.toString()).replace("+", "%20")
+        val encodedTermName = withContext(Dispatchers.IO) {
+            URLEncoder.encode(termName, StandardCharsets.UTF_8.toString())
+        }.replace("+", "%20")
         val url = "http://10.0.2.2:8080/users/${user.uid}/terms/uuid/$encodedTermName"
         Log.d("CourseManagementViewModel", "Fetching Term UUID from URL: $url")
 
@@ -45,11 +46,14 @@ class CourseManagementViewModel : ViewModel() {
 }
 
 
-    public suspend fun fetchCourseUUIDByName(termUUID: String, courseName: String): String? {
+    suspend fun fetchCourseUUIDByName(termUUID: String, courseName: String): String? {
         val user = auth.currentUser
         if (user != null) {
             // Encode the courseName to ensure the URL is correctly formatted.
-            val encodedCourseName = URLEncoder.encode(courseName, StandardCharsets.UTF_8.toString())
+            val encodedCourseName =
+                withContext(Dispatchers.IO) {
+                    URLEncoder.encode(courseName, StandardCharsets.UTF_8.toString())
+                }
             val url = "http://10.0.2.2:8080/users/${user.uid}/terms/$termUUID/courses/uuid/$encodedCourseName"
             return try {
                 httpClient.get(url)
