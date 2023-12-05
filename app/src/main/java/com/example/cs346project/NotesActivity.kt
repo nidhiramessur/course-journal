@@ -1,5 +1,6 @@
 package com.example.cs346project
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -27,12 +28,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -87,6 +91,24 @@ fun Notes(modifier: Modifier) {
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
+        val context = LocalContext.current
+        IconButton(
+            onClick = {
+                // NEED TO CHANGE
+                val intent = Intent(context, CourseManagementActivity::class.java)
+                intent.putExtra("SELECTED_TERM", "Fall 2023")
+                intent.putExtra("TERM_NAME", "Fall 2023") // Passing the term name
+                intent.putExtra("COURSE_NAME", "CS346") // Passing the course name
+                context.startActivity(intent)
+            },
+            modifier = Modifier.align(Alignment.Start)
+        ) {
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowLeft,
+                contentDescription = "Close"
+            )
+        }
+
         TopAppBar(title = { Text("Notes") },
             actions = {
                 TextButton(onClick = { showDialog = true}) {

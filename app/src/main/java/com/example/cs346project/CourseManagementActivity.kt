@@ -190,7 +190,13 @@ fun CourseInfo(termName:String, courseName: String) {
             Text(" To-do list")
         }
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                val intent = Intent(context, NotesActivity::class.java)
+                intent.putExtra("SELECTED_TERM", termName)
+                intent.putExtra("TERM_NAME", termName) // Passing the term name
+                intent.putExtra("COURSE_NAME", courseName) // Passing the course name
+                context.startActivity(intent)
+            },
             modifier = Modifier
                 .fillMaxWidth()
         ) {

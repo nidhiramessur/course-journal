@@ -49,7 +49,7 @@ fun HomePageContent() {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(vertical = 190.dp),
+            .padding(vertical = 225.dp),
         verticalArrangement = Arrangement.Bottom
     ){
         val context = LocalContext.current
@@ -73,26 +73,6 @@ fun HomePageContent() {
                 .padding(horizontal = 50.dp)
         ) {
             Text("Search or Add Term")
-        }
-        Button(
-            onClick = {
-                context.startActivity(Intent(context, UserFetchTermCoursesActivity::class.java))
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 50.dp)
-        ) {
-            Text("Demo Backend") // Temporary (Needs to be in term page)
-        }
-        Button(
-            onClick = {
-                context.startActivity(Intent(context, NotesActivity::class.java))
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 50.dp)
-        ) {
-            Text("Notes") // Temporary (Needs to be in course management page)
         }
         Button(
             onClick = {
