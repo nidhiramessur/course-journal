@@ -10,6 +10,12 @@ The course journal application is an all-in-one platform for students where they
 - Nidhi Ramessur: nbramess@uwaterloo.ca
 - Sohom Saha: s52saha@uwaterloo.ca
 
+## Meeting minutes
+https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Meeting-minutes-Sprint-4
+https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Meeting-minutes-Sprint-3
+https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Meeting-minutes-Sprint-2
+https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Meeting-minutes-Sprint-1
+
 
 ## Screenshots/Videos
 _Optional, but often helpful to have a screenshot or demo-video for new users._
