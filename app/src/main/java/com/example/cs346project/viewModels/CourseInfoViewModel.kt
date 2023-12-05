@@ -71,45 +71,54 @@ class CourseInfoViewModel : ViewModel() {
         title: String,
         requirements: String
     ) {
-        // Temporarily hardcoding the term UUID - "Fall 2023" in db (user test4)
-        // Every course added will go under the Fall 2023 term for user test4
-        val currentTermUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05"
-
-        // Real functionality is when the user is on the term page and clicks on add course
-        // it will navigate to this activity where the user can search for their course
-        // and add the course to the term page
-        // workflow: user signs in, goes to term page, clicks on add course, gets navigated to this page
-        // in the "add course" button on the term page, it should setCurrentTermUUID
-        // and we can get rid of the above line
-
-        val courseUUID = UUID.randomUUID().toString()
-//        val currentCourseUUID = courseUUID
-
-        val db = FirebaseFirestore.getInstance()
         val user = FirebaseAuth.getInstance().currentUser
-        user?.let {
-            val courseMap = hashMapOf(
-                "UUID" to courseUUID,
-                "lecturedatetime" to lectureDateTime,
-                "lecturelocation" to lectureLocation,
-                "name" to courseName,
-                "title" to title,
-                "requirements" to requirements,
-                "notes" to listOf<String>(),
-                "professorname" to instructorName,
-                "todo" to listOf<String>()
-            )
-
-            db.collection("Users").document(it.uid)
-                .collection("Terms").document(currentTermUUID)
-                .collection("Courses").document(courseUUID)
-                .set(courseMap)
-                .addOnSuccessListener {
+        user?.let { firebaseUser ->
+            FirebaseFirestore.getInstance().collection("Users").document(firebaseUser.uid).get()
+                .addOnSuccessListener { document ->
+                    val currentTermUUID = document.getString("currentTerm") ?: return@addOnSuccessListener
+                    // Proceed with adding the course under this term UUID
+                    addCourseToTerm(courseName, lectureLocation, lectureDateTime, instructorName, title, requirements, currentTermUUID)
                 }
                 .addOnFailureListener { e ->
-                    Log.w("Firestore", "Error adding course document", e)
+                    Log.w("Firestore", "Error fetching current term UUID", e)
                 }
         }
+    }
+
+    private fun addCourseToTerm(
+        courseName: String,
+        lectureLocation: String,
+        lectureDateTime: String,
+        instructorName: String,
+        title: String,
+        requirements: String,
+        termUUID: String
+    ) {
+        val courseUUID = UUID.randomUUID().toString()
+        val db = FirebaseFirestore.getInstance()
+
+        val courseMap = hashMapOf(
+            "UUID" to courseUUID,
+            "lecturedatetime" to lectureDateTime,
+            "lecturelocation" to lectureLocation,
+            "name" to courseName,
+            "title" to title,
+            "requirements" to requirements,
+            "notes" to listOf<String>(),
+            "professorname" to instructorName,
+            "todo" to listOf<String>()
+        )
+
+        db.collection("Users").document(FirebaseAuth.getInstance().currentUser?.uid ?: "")
+            .collection("Terms").document(termUUID)
+            .collection("Courses").document(courseUUID)
+            .set(courseMap)
+            .addOnSuccessListener {
+                // Handle success
+            }
+            .addOnFailureListener { e ->
+                Log.w("Firestore", "Error adding course document", e)
+            }
     }
 
 }
