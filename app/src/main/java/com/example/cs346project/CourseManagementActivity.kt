@@ -83,12 +83,17 @@ fun CourseInfo(termName:String, courseName: String) {
         val context = LocalContext.current
         IconButton(
             onClick = {
-                // Need to add logic to return to current term or term activity
                 val intent = Intent(context, TermActivity::class.java)
-                intent.putExtra("SELECTED_TERM", termName)
-                intent.putExtra("TERM_NAME", termName) // Passing the term name
-                intent.putExtra("COURSE_NAME", courseName) // Passing the course name
-                context.startActivity(intent)
+                val sourceActivity = intent.getStringExtra("SOURCE_ACTIVITY")
+                val backIntent = when (sourceActivity) {
+                    "CurrentTermActivity" -> Intent(context, CurrentTermActivity::class.java)
+                    "TermActivity" -> Intent(context, TermActivity::class.java)
+                    else -> Intent(context, CurrentTermActivity::class.java)
+                }
+                backIntent.putExtra("SELECTED_TERM", termName)
+                backIntent.putExtra("TERM_NAME", termName) // Passing the term name
+                backIntent.putExtra("COURSE_NAME", courseName) // Passing the course name
+                context.startActivity(backIntent)
             },
             modifier = Modifier.align(Alignment.Start)
         ) {

@@ -124,6 +124,7 @@ fun TermColumnItem(modifier: Modifier, courseName: String, context: Context, ter
                 val intent = Intent(context, CourseManagementActivity::class.java)
                 intent.putExtra("TERM_NAME", termName) // Passing the term name
                 intent.putExtra("COURSE_NAME", courseName) // Passing the course name
+                intent.putExtra("SOURCE_ACTIVITY", "TermActivity")
                 context.startActivity(intent)
             },
             modifier = Modifier
