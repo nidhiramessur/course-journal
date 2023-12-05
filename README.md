@@ -27,7 +27,32 @@ The Course Journal application is a comprehensive platform for students to manag
 - [Sprint 4](https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Meeting-minutes-Sprint-4)
 
 ## Requirements
-[Requirements](#)
+Requirements:
+
+Problem: Students often suffer as they don't have an all-in-one application to store all their course related information throughout their academic career. Additionally, having to switch between different applications for different information for courses throughout the term becomes a pain point. Our application will solve this problem by providing an all-in-one platform so students can easily store, access and edit such information.
+Users:
+Target users: University of Waterloo students who want a platform to keep all course related information.
+Persona: Kai is a 20-year old tech savvy undergraduate student at the University of Waterloo. They aim to stay organized and on top of their coursework while balancing other activities. They are always on the lookout for digital tools that can simplify academic tasks. Kai’s primary goal is to improve time management. However, they struggle to keep track of deadlines and manage course-related information across multiple platforms. An app that combines features such as viewing daily/weekly schedules, having all course information centralized in one place and managing their own information would be a great solution to meet their needs.
+Target users feedback: Overall the target users seemed to think such an application would be useful for keeping track of all different course information throughout school. They provided a few ideas, keeping the scope of the project in mind some of the main suggestions are outlined below and were added to the functional requirements list as well:
+
+It would be nice to have the ability to add grades for each component of the courses.
+App should be user friendly and easy to understand, so students don't waste a lot of time
+learning how to use this application on top of all the other work they have.
+A To Do list for each course would come in handy
+
+The following Functional requirements were completed as part of this project:
+
+Signup
+Login/logout
+Add a term
+Search for a term
+Add a course
+Search for a course
+Display details for the course
+Homepage view where user can search for all previous terms added by them
+Note taking functionality for each course
+To Do list functionality for each course
+
 
 ## Design
 [Design](#)
