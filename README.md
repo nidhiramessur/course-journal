@@ -43,16 +43,16 @@ A To Do list for each course would come in handy
 -Requirements
 The following Functional requirements were completed as part of this project:
 
-Signup
-Login/logout
-Add a term
-Search for a term
-Add a course
-Search for a course
-Display details for the course
-Homepage view where user can search for all previous terms added by them
-Note taking functionality for each course
-To Do list functionality for each course
+-Signup
+-Login/logout
+-Add a term
+-Search for a term
+-Add a course
+-Search for a course
+-Display details for the course
+-Homepage view where user can search for all previous terms added by them
+-Note taking functionality for each course
+-To Do list functionality for each course
 
 
 ## Design
