@@ -24,6 +24,9 @@ class CourseManagementViewModel : ViewModel() {
     val _courseInfoState = MutableStateFlow<List<CourseInfoDbData>>(emptyList())
     val courseInfoState = _courseInfoState.asStateFlow()
 
+    private val _errorMessage = MutableStateFlow<String>("")
+    val errorMessage = _errorMessage.asStateFlow()
+
     suspend fun fetchTermUUIDByName(termName: String): String? {
     val user = auth.currentUser
     if (user != null) {
@@ -85,6 +88,7 @@ class CourseManagementViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                _errorMessage.value = "Error fetching course information: ${e.localizedMessage}"
                 _courseInfoState.value = emptyList()
             }
         }
