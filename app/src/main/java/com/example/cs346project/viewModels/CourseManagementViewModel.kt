@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import android.util.Log;
+import android.util.Log
 
 
 class CourseManagementViewModel : ViewModel() {
