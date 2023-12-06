@@ -129,6 +129,49 @@ class TermViewModel : ViewModel() {
         }
     }
 
+    suspend fun fetchCurrentTermUUID(onResult: (String) -> Unit) {
+        viewModelScope.launch {
+            val user = auth.currentUser
+            if (user != null) {
+                val documents = db.collection("Users")
+                    .document(user.uid)
+                    .get()
+                    .await()
+
+                val currentTermUUID = documents.getString("currentTerm")
+                Log.d("CURRENT_TERM_NAME", currentTermUUID?:"")
+                if (currentTermUUID != null) {
+                    onResult(currentTermUUID)
+                }
+            }
+        }
+    }
+
+    fun fetchNamefromCurrentTermUUID(termUUID: String, onResult: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val user = auth.currentUser
+                if (user != null) {
+                    // Query to find the term UUID based on term name
+                    val documents = db.collection("Users")
+                        .document(user.uid)
+                        .collection("Terms")
+                        .document(termUUID)
+                        .get()
+                        .await()
+
+                    val termName = documents.getString("name")
+                    Log.d("CURRENT_TERM_NAME_NEW", termName?:"")
+                    if (termName != null) {
+                        onResult(termName)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun addTerm(termName: String) {
         val termUUID = UUID.randomUUID().toString()
 

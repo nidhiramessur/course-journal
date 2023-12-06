@@ -261,7 +261,7 @@ class CourseInfoDisplayActivity : BaseActivity() {
                                                     }
                                                 }
                                             } else {
-                                                Text(text = "Course schedule not found TEMP")
+                                                Text(text = "Course schedule not found")
                                             }
                                         }
                                     }

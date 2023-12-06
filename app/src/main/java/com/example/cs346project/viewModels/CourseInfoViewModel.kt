@@ -42,7 +42,7 @@ class CourseInfoViewModel : ViewModel() {
             }
         } catch (e: Exception) {
             Log.e("API_REQUEST 1", "Error: ${e.message}")
-            _errorMessage.value = e.message.toString()
+            _errorMessage.value = "Course not found"
         }
     }
 
@@ -61,7 +61,7 @@ class CourseInfoViewModel : ViewModel() {
             }
         } catch (e: Exception) {
             Log.e("API_REQUEST 2", "Error: ${e.message}")
-            _apiErrorMessage.value = e.message.toString()
+            _apiErrorMessage.value = "Course schedule not found"
         }
     }
 

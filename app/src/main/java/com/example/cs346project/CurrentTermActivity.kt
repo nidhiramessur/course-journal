@@ -27,9 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cs346project.viewModels.TermViewModel
 import com.example.cs346project.viewModels.NavigationViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import android.util.Log
 
 class CurrentTermActivity : BaseActivity() {
 
@@ -52,40 +49,19 @@ fun CurrentTermPage() {
     val termViewModel: TermViewModel = viewModel()
     val coursesState = termViewModel.coursesState.collectAsState()
     val context = LocalContext.current
-    val currentUser = FirebaseAuth.getInstance().currentUser
     var currentTermTitle by remember { mutableStateOf("Loading...") }
+    var refresh by remember { mutableStateOf(0) }
+    refresh++
 
-      LaunchedEffect(currentUser) {
-        currentUser?.let { user ->
-            FirebaseFirestore.getInstance().collection("Users").document(user.uid).get()
-                .addOnSuccessListener { document ->
-                    val termUUID = document.getString("currentTerm")
-                    Log.d("UUID", "Fetching term UUID: $termUUID")
+    LaunchedEffect(true) {
+        termViewModel.fetchCurrentTermUUID { termUUID ->
+            termViewModel.fetchCoursesForTerm(termUUID)
+            termViewModel.fetchNamefromCurrentTermUUID(termUUID) {currentTermName ->
+                currentTermTitle = currentTermName
 
-                    if (!termUUID.isNullOrEmpty()) {
-                        // Fetch the term title based on the UUID
-                        FirebaseFirestore.getInstance().collection("Users").document(user.uid)
-                            .collection("Terms").document(termUUID).get()
-                            .addOnSuccessListener { termDocument ->
-                                currentTermTitle = termDocument.getString("name") ?: "Term not found"
-                                // Fetch the courses for the current term
-                                termViewModel.fetchCoursesForTerm(termUUID)
-                            }
-                            .addOnFailureListener { e ->
-                                Log.w("Firestore", "Error fetching term name", e)
-                                currentTermTitle = "Term not found"
-                            }
-                    } else {
-                        currentTermTitle = "No current term set"
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.w("Firestore", "Error fetching user's current term", e)
-                    currentTermTitle = "Term not found"
-                }
+            }
         }
     }
-
 
     Column(
         modifier = Modifier
@@ -122,6 +98,7 @@ fun CurrentTermPage() {
 
         Button(
             onClick = {
+                refresh++
                 context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
             },
             modifier = Modifier
