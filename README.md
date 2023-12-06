@@ -64,6 +64,43 @@ Firestore is a NoSQL document based database. Since none of us had used it befor
 structured but towardds the end of the course we all became proficient in writing different complex queries using firestore. One technical decision we made during the initial stages was to add all the navigation at the end. This decision did not work in our favor
 as towards the end we had to make a lot of changes for the navigation to work as we wanted it to. 
 
+**Webservice Design**
+
+A Ktor based webservice was created and used to work as a middle-layer in our tiered architecture system. When a user needs to fetch or send information to be stored in our Firestore we can model the request like this:
+
+1. User triggers a GET/POST request (Client Side Interaction) to http://localhost:8080/ (local host)
+2. Ktor webservice recieves this request and uses the parameters provided by the client to query information from the Firestore.
+3. Firestore sends a response to the server and it processes the response converting it to JSON.  
+4. Ktor webservice completes the API promise and returns a JSON response.
+5. Client side processes the JSON and returns the information through the frontend components for the user to see.
+
+
+**Deployment**
+
+The webservice is deployed by utilizing Docker and containerizing the application, creating a Docker image based on the JAR file used to build the Ktor server.
+
+Once the Docker container is running, it listens at port 8080, when the client side want to make a API request, it calls it from the users localhost and provides the specific request such as 
+`get("/users/{userId}/terms")` 
+
+**Basic Diagram:**
+```
++----------------+     +-------------------+     +------------------+
+| Android App UI |     | Docker Container  |     | Firestore        |
+| (Client Layer) |     | (Ktor Web Service)|     | (Database Layer) |
++----------------+     +-------------------+     +------------------+
+        |                       |                          |
+        |--- API Request -----> |                          |
+        |                       |                          |
+        |                       |-- Process Request -----> |
+        |                       |                          |
+        |                       | <--- Query Data -------- |
+        |                       |                          |
+        |<-- JSON Response ---- |                          |
+        |                       |                          |
+        |                       |                          |
+
+```
+
 ## Discussion
 Since our team had minimal exposure to kotlin & compose before starting the project we frequently referred to the Android Developer 
 documentation to understand best practices and learn more. This was also the first time we worked on a project of this nature from start to
