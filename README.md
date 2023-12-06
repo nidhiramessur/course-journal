@@ -164,25 +164,12 @@ Once we have the app running, we need to host our webservice locally to be able 
 
 **Setting up the JAR file**
 
-The JAR file required to build this service can be either downloaded in the given files or you can build it using 
-`./gradlew shadowJar` in the /ktor-346 directory. `
+**Setting up the JAR file**
 
-**Note** If you are downloading it, place the file somewhere within
-`/ktor-346` directory such as `build/libs`.
+The JAR file required to build this service, it is already uploaded to the repository and it is not required to build again. It will be in the `build/libs` folder in `ktor-346/`
 
-Then you can run:
+If you run into issues with using the JAR folder, delete the existing one and in ktor-346/ run: `./gradlew shadowJar` this will rebuild the JAR and build/libs folders.
 
-    java -jar path/to/com.example.ktor-346-all.jar
-
-If we place the JAR in build/libs for example, run:
-
-    java -jar build/libs/com.example.ktor-346-all.jar
-
-
-
-If you instead want to build it yourself, in /ktor-346, run:
-
-    ./gradlew shadowJar
 
 **Running the Docker Container and deploying the webservice**
 
