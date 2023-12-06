@@ -18,7 +18,6 @@ The Course Journal application is a comprehensive platform for students to manag
 - [Screenshots/Videos](#screenshotsvideos)
 - [Project Documents](#project-documents)
 - [Software Releases](#software-releases)
-- [Tools](#tools)
 
 ## Meeting Minutes
 - [Sprint 1](https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Meeting-minutes-Sprint-1)
@@ -175,5 +174,12 @@ docker run -d -p 8080:8080 --name my-ktor-container ktor-app
 - To check the error logs for the container you can use `docker logs my-ktor-container`
 - If you are having trouble with downloading the JAR or using the downloaded file, you can delete it, and use the command given to build your own JAR file.
 
+## Screenshots/Videos
+
+
+## Project Documents
+[Rough wireframe diagram](https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Rough-high-level-wireframe-diagram)
+
+## Software Releases
 
 
