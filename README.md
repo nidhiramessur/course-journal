@@ -166,8 +166,6 @@ Once we have the app running, we need to host our webservice locally to be able 
 
 **Setting up the JAR file**
 
-**Setting up the JAR file**
-
 The JAR file required to build this service, it is already uploaded to the repository and it is not required to build again. It will be in the `build/libs` folder in `ktor-346/`
 
 If you run into issues with using the JAR folder, delete the existing one and in ktor-346/ run: `./gradlew shadowJar` this will rebuild the JAR and build/libs folders.
