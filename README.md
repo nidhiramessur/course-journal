@@ -61,13 +61,26 @@ The design pattern we tried to adapt was Model-View-ViewModel, this was because 
 research we noticed that this is the most popular desig pattern used for Android Applications. Additionally, none of our team members had 
 used this before so we decided it would be a good idea to learn more about it. We decided to use firebase for authentication and firestore 
 for storing our data. This turned out to be a good decision as firebase handled authentication for us in a very nice manner. More over, 
-Firebase is a NoSQL document based database. Since none of us had used it before, it was initially hard to grasp how documents/collections are
-structured but towardds the end of the course we all became proficient in writing different complex CRUD operations using firestore.
+Firestore is a NoSQL document based database. Since none of us had used it before, it was initially hard to grasp how documents/collections are
+structured but towardds the end of the course we all became proficient in writing different complex queries using firestore. One technical decision we made during the initial stages was to add all the navigation at the end. This decision did not work in our favor
+as towards the end we had to make a lot of changes for the navigation to work as we wanted it to. Moreover, a lot of small changes needed to 
+be made throughout the codebase to get the navigation to work. 
 
 ## Discussion
 Since our team had minimal exposure to kotlin & compose before starting the project we frequently referred to the Android Developer 
 documentation to understand best practices and learn more. This was also the first time we worked on a project of this nature from start to
-end therefore there were a lot of learnings. 
+end therefore there were a lot of learnings. Weekly meetings, and meeting minutes really helped our team stay organized and focused. Moreover,
+pair programming helped us learn new coding techniques from each other. Pair programming also helped us catch flaws earlier in the 
+process which were then addressed accordingly. 
+A few things we would do differently when creating a project of this nature would be:
+-Complete more readings and watch more tutorials before starting to write code. This will ensure our code is more clean and we are
+adapting best practices from the start.    
+-Add navigation as soon as a new screen is introduced.    
+-Set up more time for pair programming we it is really helpful, especially when everyone is learning.     
+-Make sure tasks assigned don't overlap during a sprint so two people are not modifying the same file for the same purpose, this results
+in a waste of overall group time and effort.     
+-Add more tests
+
 
 ## Installation Details
 ### On Virtual device in Android studio:
