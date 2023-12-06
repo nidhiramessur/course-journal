@@ -107,6 +107,7 @@ In these steps you have the option to bundle the APK yourself by cloning the rep
 4. The app should begin to download and appear with a default green Android icon. You can now open it and begin.
 
 **Option B:** Build the APK on Android Studio:
+
 1. Clone the repository using Git: git clone <repository-url>
 2. Open Android Studio and select 'Open an existing project', then navigate to the cloned repository directory.
 3. Build the APK by going to `Build > Build Bundle(s) / APK(s) > Build APK(s)` and click on 'locate' to find the APK in the debug folder.
@@ -160,7 +161,7 @@ docker build -t ktor-app .
 docker run -d -p 8080:8080 --name my-ktor-container ktor-app
 ```
 
-3. Once the docker container is succesfully running you can test  the microservice is running by going to http://localhost:8080/
+4. Once the docker container is succesfully running you can test  the microservice is running by going to http://localhost:8080/
 
 
 **Troubleshooting**:
