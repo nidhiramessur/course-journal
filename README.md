@@ -40,11 +40,10 @@ App should be user friendly and easy to understand, so students don't waste a lo
 learning how to use this application on top of all the other work they have.   
 A To Do list for each course would come in handy
 
-Keeping the scope of the project in mind some we implemented some of the suggestions as is outlined in the functional requirements list below
+Keeping the scope of the project in mind some we implemented some of the suggestions as is outlined in the list below
 
 -Requirements
-The following Functional requirements were completed as part of this project:
-
+The following features were completed as part of this project:
 -Signup      
 -Login/logout  
 -Add a term  
@@ -58,10 +57,17 @@ The following Functional requirements were completed as part of this project:
 
 
 ## Design
-[Design](#)
+The design pattern we tried to adapt was Model-View-ViewModel, this was because after doing some 
+research we noticed that this is the most popular desig pattern used for Android Applications. Additionally, none of our team members had 
+used this before so we decided it would be a good idea to learn more about it. We decided to use firebase for authentication and firestore 
+for storing our data. This turned out to be a good decision as firebase handled authentication for us in a very nice manner. More over, 
+Firebase is a NoSQL document based database. Since none of us had used it before, it was initially hard to grasp how documents/collections are
+structured but towardds the end of the course we all became proficient in writing different complex CRUD operations using firestore.
 
 ## Discussion
-[Discussion](#)
+Since our team had minimal exposure to kotlin & compose before starting the project we frequently referred to the Android Developer 
+documentation to understand best practices and learn more. This was also the first time we worked on a project of this nature from start to
+end therefore there were a lot of learnings. 
 
 ## Installation Details
 ### On Virtual device in Android studio:
