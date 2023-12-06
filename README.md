@@ -80,41 +80,99 @@ adapting best practices from the start.
 in a waste of overall group time and effort.     
 -Add more tests
 
-
 ## Installation Details
-### On Virtual device in Android studio:
-1. Clone the project and open it in Android Studio.
-2. Build the project by navigating to `Build > Build Bundle(s) / APK(s) > Build APK(s)`.
-3. A popup will appear in the bottom right-hand corner; click on 'locate' to find the APK in the debug folder.
-4. Navigate to `Device Explorer` in Android Studio, go to `sdcard > Download`, then drag and drop the APK file there.
-5. On the virtual device, navigate to `Files > Downloads`. Tap on the APK file to install it, choose 'Update' if prompted, and then 'Open' after installation.
 
-### Course Journal Application Installation Guide
 #### Introduction
-This guide provides detailed steps for installing and running the Course Journal application on both an Android client and a backend service.
+This guide provides detailed steps for installing and running the Course Journal application on both an Android client and a backend service. It consists of either building or using our APK to run the application on the Android Studio Emulator, and then setting up the Ktor webservice by using or building a JAR file and finally running and building the docker image. 
 
 #### Prerequisites
 - Android Studio
 - Docker Desktop
-- Git
 - Java Development Kit (JDK) 11 or higher
 
-#### Installing the Android Client
+### Given Files
+
+1) APK file
+2) JAR file
+
+### Step 1. Running the Android App (Client Side)
+
+In these steps you have the option to bundle the APK yourself by cloning the repo and creating a project in Android studio. The quicker alternative, Option A is downloading the given APK file directly, and use it within a emulator. Either choice will work fine.
+
+**Option A:** Download the given APK directly:
+
+1. Download the APK file as provided here.
+2. Open Android Studio and under `Device Manager` create/run a mobile device (Testing was done on the Pixel 3a)
+3. Once the device boots and is turned on, drag and drop the downloaded APK file directly into the emulator screen.
+4. The app should begin to download and appear with a default green Android icon. You can now open it and begin.
+
+**Option B:** Build the APK on Android Studio:
 1. Clone the repository using Git: git clone <repository-url>
 2. Open Android Studio and select 'Open an existing project', then navigate to the cloned repository directory.
 3. Build the APK by going to `Build > Build Bundle(s) / APK(s) > Build APK(s)` and click on 'locate' to find the APK in the debug folder.
 4. Use the 'Device Explorer' in Android Studio to navigate to `sdcard > Download` and drag the APK there.
 5. On the virtual or physical device, navigate to `Files > Downloads`, tap on the APK file to install it, and then open the app.
 
-#### Setting Up the Backend Service
-1. Make sure Docker Desktop is installed and running.
-2. Build the Docker container for the backend service with the following commands:
-    ```
-    cd ktor-346/
+**Troubleshooting**:
+
+- Make sure you have JDK 11+ installed on your device, you can download it from the [Oracle Website](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html)
+
+- If you are having trouble building the APK, you can download the one given here and follow **Option A**.
+- Make sure Android Studio is up to date, and if troubles persist restart the application and create a new project.
+
+### Step 2. Setting Up the Ktor Webservice
+
+Once we have the app running, we need to host our webservice locally to be able to send API requests and recieve information from the applications Firestore and UW API instances. 
+
+
+**Setting up the JAR file**
+
+The JAR file required to build this service can be either downloaded **here** or you can build it using 
+`./gradlew shadowJar` in the /ktor-346 directory. `
+
+**Note** If you are downloading it, place the file somewhere within
+`/ktor-346` directory such as `build/libs`.
+
+Then you can run:
+
+    java -jar path/to/com.example.ktor-346-all.jar
+
+If we place the JAR in build/libs for example, run:
+
+    java -jar build/libs/com.example.ktor-346-all.jar
+
+
+
+If you instead want to build it yourself, in /ktor-346, run:
+
     ./gradlew shadowJar
-    docker build -t ktor-app .
-    docker run -d -p 8080:8080 --name my-ktor-container ktor-app
-    ```
+
+**Running the Docker Container and deploying the webservice**
+
+1. Make sure Docker Desktop is installed and running.
+2. Make sure you are in the Ktor directory:
+    `mns346-3/ktor-346`
+
+3. Run the following commands to build your Docker image and run your container.
+
+```
+docker build -t ktor-app .
+docker run -d -p 8080:8080 --name my-ktor-container ktor-app
+```
+
 3. Once the docker container is succesfully running you can test  the microservice is running by going to http://localhost:8080/
+
+
+**Troubleshooting**:
+
+- To check if docker is installed properly you can run `docker --version` to see if it is installed.
+
+- To check if any containers are running you can run `docker ps`
+
+- Ensure you have JDK 11+ installed on your computer, you can see what version(s) you have by using `java --version`
+
+- To check the error logs for the container you can use `docker logs my-ktor-container`
+- If you are having trouble with downloading the JAR or using the downloaded file, you can delete it, and use the command given to build your own JAR file.
+
 
 
