@@ -53,12 +53,15 @@ fun CurrentTermPage() {
     var refresh by remember { mutableStateOf(0) }
     refresh++
 
-    LaunchedEffect(true) {
+    LaunchedEffect(refresh) {
         termViewModel.fetchCurrentTermUUID { termUUID ->
-            termViewModel.fetchCoursesForTerm(termUUID)
-            termViewModel.fetchNamefromCurrentTermUUID(termUUID) {currentTermName ->
-                currentTermTitle = currentTermName
-
+            if (termUUID != "") {
+                termViewModel.fetchCoursesForTerm(termUUID)
+                termViewModel.fetchNamefromCurrentTermUUID(termUUID) { currentTermName ->
+                    currentTermTitle = currentTermName
+                }
+            } else {
+                currentTermTitle = "No current term"
             }
         }
     }
@@ -96,15 +99,17 @@ fun CurrentTermPage() {
             }
         }
 
-        Button(
-            onClick = {
-                refresh++
-                context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
-            },
-            modifier = Modifier
-                .padding(top = 30.dp)
-        ) {
-            Text("Add Course")
+        if (currentTermTitle != "No current term") {
+            Button(
+                onClick = {
+                    refresh++
+                    context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
+                },
+                modifier = Modifier
+                    .padding(top = 30.dp)
+            ) {
+                Text("Add Course")
+            }
         }
     }
 }

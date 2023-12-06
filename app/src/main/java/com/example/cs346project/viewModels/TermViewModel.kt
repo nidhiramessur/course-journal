@@ -131,18 +131,25 @@ class TermViewModel : ViewModel() {
 
     suspend fun fetchCurrentTermUUID(onResult: (String) -> Unit) {
         viewModelScope.launch {
-            val user = auth.currentUser
-            if (user != null) {
-                val documents = db.collection("Users")
-                    .document(user.uid)
-                    .get()
-                    .await()
+            try {
+                val user = auth.currentUser
+                if (user != null) {
+                    val documents = db.collection("Users")
+                        .document(user.uid)
+                        .get()
+                        .await()
 
-                val currentTermUUID = documents.getString("currentTerm")
-                Log.d("CURRENT_TERM_NAME", currentTermUUID?:"")
-                if (currentTermUUID != null) {
-                    onResult(currentTermUUID)
+                    val currentTermUUID = documents.getString("currentTerm")
+                    Log.d("CURRENT_TERM_NAME", currentTermUUID?:"")
+                    if (currentTermUUID != null) {
+                        onResult(currentTermUUID)
+                    } else {
+                        onResult("")
+                    }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onResult("")
             }
         }
     }
