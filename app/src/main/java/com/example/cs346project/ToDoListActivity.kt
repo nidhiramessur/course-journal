@@ -70,7 +70,6 @@ fun TodoListScreen(viewModel: TodoViewModel, termName:String, courseName: String
         val context = LocalContext.current
         IconButton(
             onClick = {
-                // NEED TO CHANGE
                 val intent = Intent(context, CourseManagementActivity::class.java)
                 intent.putExtra("SELECTED_TERM", termName)
                 intent.putExtra("TERM_NAME", termName) // Passing the term name
