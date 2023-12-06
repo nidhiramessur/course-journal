@@ -128,23 +128,25 @@ This guide provides detailed steps for installing and running the Course Journal
 
 ### Given Files
 
-1) APK file (Link a download link the the APK **TODO** until final merge)
-2) JAR file  (Link a download link the the JAR **TODO** until final merge)
+1) APK file `/mns346/app/build/outputs/apk/debug/app-debug.apk`
+2) JAR file  `/mns346/ktor-346/build/libs/com.example.ktor-346-all.jar`
 
 ### Step 1. Running the Android App (Client Side)
 
 In these steps you have the option to bundle the APK yourself by cloning the repo and creating a project in Android studio. The quicker alternative, Option A is downloading the given APK file directly, and use it within a emulator. Either choice will work fine.
 
-**Option A:** Download the given APK directly:
+**Option A:** Drag and drop the given APK directly:
 
-1. Download the APK file as provided.
+The APK is located in the /app directory `app/build/outputs/apk/debug/app-debug.apk`
+
+1. Locate the APK file as provided in your finder.
 2. Open Android Studio and under `Device Manager` create/run a mobile device (Testing was done on the Pixel 3a)
-3. Once the device boots and is turned on, drag and drop the downloaded APK file directly into the emulator screen.
+3. Once the device boots and is turned on, drag and drop the  APK file directly into the emulator screen.
 4. The app should begin to download and appear with a default green Android icon. You can now open it and begin.
 
 **Option B:** Build the APK on Android Studio:
 
-1. Clone the repository using Git: git clone <repository-url>
+1. Clone the repository using Git: git clone
 2. Open Android Studio and select 'Open an existing project', then navigate to the cloned repository directory.
 3. Build the APK by going to `Build > Build Bundle(s) / APK(s) > Build APK(s)` and click on 'locate' to find the APK in the debug folder.
 4. Use the 'Device Explorer' in Android Studio to navigate to `sdcard > Download` and drag the APK there.
@@ -154,7 +156,7 @@ In these steps you have the option to bundle the APK yourself by cloning the rep
 
 - Make sure you have JDK 11+ installed on your device, you can download it from the [Oracle Website](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html)
 
-- If you are having trouble building the APK, you can download the one given here and follow **Option A**.
+- If you are having trouble building the APK, you can use the one given here and follow **Option A**.
 - Make sure Android Studio is up to date, and if troubles persist restart the application and create a new project.
 
 ### Step 2. Setting Up the Ktor Webservice
