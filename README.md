@@ -213,6 +213,8 @@ docker run -d -p 8080:8080 --name my-ktor-container ktor-app
 
 ## Screenshots/Videos
 
+This is a google drive to the [screenshots](https://docs.google.com/document/d/1Cxab_93FqLL2An8Cf8DXTpiw1gUp9kG0qFYQiSkv9Zs/edit)
+
 
 ## Project Documents
 [Rough wireframe diagram](https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Rough-high-level-wireframe-diagram)
