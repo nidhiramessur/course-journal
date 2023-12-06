@@ -70,12 +70,12 @@ Since our team had minimal exposure to kotlin & compose before starting the proj
 documentation to understand best practices and learn more. This was also the first time we worked on a project of this nature from start to
 end therefore there were a lot of learnings. Weekly meetings, and meeting minutes really helped our team stay organized and focused. Moreover,
 pair programming helped us learn new coding techniques from each other. Pair programming also helped us catch flaws earlier in the 
-process which were then addressed accordingly. 
-A few things we would do differently when creating a project of this nature would be:
+process which were then addressed accordingly.          
+A few things we would do differently when creating a project of this nature would be:           
 -Complete more readings and watch more tutorials before starting to write code. This will ensure our code is more clean and we are
-adapting best practices from the start.    
+adapting best practices from the start.       
 -Add navigation as soon as a new screen is introduced.    
--Set up more time for pair programming we it is really helpful, especially when everyone is learning.     
+-Set up more time for pair programming as it is really helpful, especially when everyone is learning.     
 -Make sure tasks assigned don't overlap during a sprint so two people are not modifying the same file for the same purpose, this results
 in a waste of overall group time and effort.     
 -Add more tests
