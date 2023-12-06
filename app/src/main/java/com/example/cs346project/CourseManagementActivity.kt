@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -166,6 +167,8 @@ fun CourseInfo(termName:String, courseName: String) {
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center)
                 }
+            } else {
+                CircularProgressIndicator()
             }
 
             Button(

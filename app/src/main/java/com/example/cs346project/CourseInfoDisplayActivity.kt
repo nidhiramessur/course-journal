@@ -27,12 +27,14 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -72,6 +74,8 @@ class CourseInfoDisplayActivity : BaseActivity() {
         var title = ""
         var requirements = ""
         val lectureDateTimeSet = mutableSetOf<String>()
+        val errorMessage by viewModel.errorMessage.collectAsState()
+        val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
 
         Column(
             modifier = Modifier
@@ -165,7 +169,9 @@ class CourseInfoDisplayActivity : BaseActivity() {
                             }
 
                             // Display course info from UW Open API if available
-                            if (viewModel.errorMessage.isEmpty()) {
+                            if (errorMessage.isNotEmpty()) {
+                                Text(text = errorMessage, color = Color.Red)
+                            } else {
                                 if (viewModel.courseInfo.isNotEmpty()) {
                                     val specificCourse = viewModel.courseInfo.find { it.subjectCode == subject.uppercase() && it.catalogNumber == courseNumber }
 
@@ -198,7 +204,9 @@ class CourseInfoDisplayActivity : BaseActivity() {
                                         val courseID = specificCourse.courseId
 
                                         // Display class Schedule info from UW Open API
-                                        if (viewModel.apiErrorMessage.isEmpty()) {
+                                        if (apiErrorMessage.isNotEmpty()) {
+                                            Text(text = apiErrorMessage, color = Color.Red)
+                                        } else {
                                             if (viewModel.classScheduleInfo.isNotEmpty()) {
                                                 val specificCourseLectureInfoAPI = viewModel.classScheduleInfo
                                                 for (specificCourseLectureInfo in specificCourseLectureInfoAPI) {
@@ -253,17 +261,13 @@ class CourseInfoDisplayActivity : BaseActivity() {
                                                     }
                                                 }
                                             } else {
-                                                Text(text = "Course schedule not found")
+                                                Text(text = "Course schedule not found TEMP")
                                             }
-                                        } else {
-                                            Text(text = "Course schedule not found")
                                         }
                                     }
                                 } else {
                                     Text(text = "Course not found")
                                 }
-                            } else {
-                                Text(text = "Course not found")
                             }
 
                             // Input fields for instructor name and lecture location

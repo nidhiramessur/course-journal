@@ -3,6 +3,7 @@ package com.example.cs346project
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,21 +45,24 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cs346project.models.Note
 import com.example.cs346project.viewModels.NotesViewModel
 import com.example.cs346project.viewModels.NavigationViewModel
+import com.example.cs346project.viewModels.TermViewModel
+import kotlinx.coroutines.launch
 
-
-// WIP
 
 class NotesActivity : BaseActivity() {
+    private val viewModel: NotesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val termName = intent.getStringExtra("TERM_NAME") // Retrieve the term name
+        val courseName = intent.getStringExtra("COURSE_NAME") // Retrieve the course name
 
-         setContent {
+        setContent {
             val selectedItem = NavigationViewModel.selectedItem.value
             BaseScreen(selectedItem, onItemSelected = { index ->
                 NavigationViewModel.selectedItem.value = index
             }) {
-                Notes(modifier = Modifier)
+                Notes(modifier = Modifier, viewModel, termName ?: "", courseName ?: "")
             }
         }
     }
@@ -66,9 +71,10 @@ class NotesActivity : BaseActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Notes(modifier: Modifier) {
-    val viewModel: NotesViewModel = viewModel()
+fun Notes(modifier: Modifier, viewModel: NotesViewModel, termName:String, courseName: String) {
     val notesState = viewModel.notesState.collectAsState()
+    val termViewModel: TermViewModel = viewModel()
+
     var showDialog by remember {
         mutableStateOf((false))
     }
@@ -81,10 +87,17 @@ fun Notes(modifier: Modifier) {
     var noteSelected by remember {
         mutableStateOf<Note?>(null)
     }
+    val coroutineScope = rememberCoroutineScope()
+
+    refresh++
+
 
     LaunchedEffect(refresh) {
-        viewModel.fetchCourseNotes(termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05", CourseUUID =
-        "f1763f11-625f-434d-9af7-85cdedd10117")
+        termViewModel.fetchTermUUIDFromName(termName) { termUUID ->
+            termViewModel.fetchCoursesUUIDFromName(termUUID, courseName) { courseUUID ->
+                viewModel.fetchCourseNotes(termUUID, courseUUID)
+            }
+        }
     }
     Column(
         modifier
@@ -94,11 +107,10 @@ fun Notes(modifier: Modifier) {
         val context = LocalContext.current
         IconButton(
             onClick = {
-                // NEED TO CHANGE
                 val intent = Intent(context, CourseManagementActivity::class.java)
-                intent.putExtra("SELECTED_TERM", "Fall 2023")
-                intent.putExtra("TERM_NAME", "Fall 2023") // Passing the term name
-                intent.putExtra("COURSE_NAME", "CS346") // Passing the course name
+                intent.putExtra("SELECTED_TERM", termName)
+                intent.putExtra("TERM_NAME", termName) // Passing the term name
+                intent.putExtra("COURSE_NAME", courseName) // Passing the course name
                 context.startActivity(intent)
             },
             modifier = Modifier.align(Alignment.Start)
@@ -127,16 +139,26 @@ fun Notes(modifier: Modifier) {
             note = note,
             onDismiss = { noteSelected = null},
             onUpdate = {newnote ->
-                viewModel.updateNote(termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05", CourseUUID =
-                "f1763f11-625f-434d-9af7-85cdedd10117",newnote)
-                noteSelected = null
-                refresh++
+                coroutineScope.launch {
+                    termViewModel.fetchTermUUIDFromName(termName) { termUUID ->
+                        termViewModel.fetchCoursesUUIDFromName(termUUID, courseName) { courseUUID ->
+                            viewModel.updateNote(termUUID, courseUUID,newnote)
+                            noteSelected = null
+                            refresh++
+                        }
+                    }
+                }
             },
             onDelete = {delNote ->
-                viewModel.deleteNote(termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05", CourseUUID =
-                "f1763f11-625f-434d-9af7-85cdedd10117",delNote)
-                noteSelected = null
-                refresh++
+                coroutineScope.launch {
+                    termViewModel.fetchTermUUIDFromName(termName) { termUUID ->
+                        termViewModel.fetchCoursesUUIDFromName(termUUID, courseName) { courseUUID ->
+                            viewModel.deleteNote(termUUID, courseUUID,delNote)
+                            noteSelected = null
+                            refresh++
+                        }
+                    }
+                }
             }
         )
     }
@@ -145,11 +167,16 @@ fun Notes(modifier: Modifier) {
             onDismiss = {showDialog = false
                 noteData = ""},
             onSave = {note ->
-                viewModel.addNote(termUUID = "5ee51a2c-022a-46f5-851e-558ad9a14a05", CourseUUID =
-                "f1763f11-625f-434d-9af7-85cdedd10117",note)
-                showDialog = false
-                noteData = ""
-                refresh++
+                coroutineScope.launch {
+                    termViewModel.fetchTermUUIDFromName(termName) { termUUID ->
+                        termViewModel.fetchCoursesUUIDFromName(termUUID, courseName) { courseUUID ->
+                            viewModel.addNote(termUUID, courseUUID,note)
+                            showDialog = false
+                            noteData = ""
+                            refresh++
+                        }
+                    }
+                }
             }
         )
     }

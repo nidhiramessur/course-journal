@@ -66,6 +66,34 @@ class TermViewModel : ViewModel() {
         }
     }
 
+    fun fetchCoursesUUIDFromName(termUUID: String, courseName:String, onResult: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val user = auth.currentUser
+                if (user != null) {
+                    // Query to find the term UUID based on term name
+                    val termQuerySnapshot = db
+                        .collection("Users")
+                        .document(user.uid)
+                        .collection("Terms")
+                        .document(termUUID)
+                        .collection("Courses")
+                        .whereEqualTo("name", courseName) // Assuming 'name' is the field for term name
+                        .get()
+                        .await()
+
+                    // Assuming that term names are unique and there's only one document
+                    val courseUUID = termQuerySnapshot.documents.firstOrNull()?.id
+                    if (courseUUID != null) {
+                        onResult(courseUUID)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun fetchCoursesForTerm(termUUID: String) {
         viewModelScope.launch {
             val user = auth.currentUser
