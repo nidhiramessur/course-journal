@@ -63,8 +63,7 @@ used this before so we decided it would be a good idea to learn more about it. W
 for storing our data. This turned out to be a good decision as firebase handled authentication for us in a very nice manner. More over, 
 Firestore is a NoSQL document based database. Since none of us had used it before, it was initially hard to grasp how documents/collections are
 structured but towardds the end of the course we all became proficient in writing different complex queries using firestore. One technical decision we made during the initial stages was to add all the navigation at the end. This decision did not work in our favor
-as towards the end we had to make a lot of changes for the navigation to work as we wanted it to. Moreover, a lot of small changes needed to 
-be made throughout the codebase to get the navigation to work. 
+as towards the end we had to make a lot of changes for the navigation to work as we wanted it to. 
 
 ## Discussion
 Since our team had minimal exposure to kotlin & compose before starting the project we frequently referred to the Android Developer 
