@@ -50,7 +50,6 @@ import com.example.cs346project.viewModels.CourseManagementViewModel
 import com.example.cs346project.viewModels.TermViewModel
 import com.example.cs346project.viewModels.NavigationViewModel
 
-import android.net.Uri
 import android.util.Log
 
 
@@ -80,6 +79,8 @@ fun SearchTerm() {
     var selectedTerm by remember { mutableStateOf("") }
     var isFetchingUUID by remember { mutableStateOf(false) }
     var newTerm by remember { mutableStateOf("") }
+    var refresh by remember { mutableStateOf(0) }
+    refresh++
 
     LaunchedEffect(true) {
         termViewModel.fetchTerms()
@@ -96,11 +97,14 @@ fun SearchTerm() {
 
         ExposedDropdownMenuBox(
             expanded = expandedState,
-            onExpandedChange = {expandedState = !expandedState}) {
+            onExpandedChange = {
+                refresh++
+                expandedState = !expandedState
+            }) {
             
             TextField(
                 value = selectedOption,
-                onValueChange = {},
+                onValueChange = {refresh++},
                 trailingIcon = {ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedState)},
                 readOnly = true,
                 textStyle = TextStyle.Default.copy(fontSize = 28.sp)
@@ -108,13 +112,16 @@ fun SearchTerm() {
 
             ExposedDropdownMenu(
                 expanded = expandedState,
-                onDismissRequest = { expandedState = false }) {
+                onDismissRequest = {
+                    refresh++
+                    expandedState = false }) {
 
                 termsList.forEach{
                     eachOption -> DropdownMenuItem(onClick = {
-                selectedOption = eachOption
-                expandedState = false
-                onTermSelected(eachOption)
+                    refresh++
+                    selectedOption = eachOption
+                    expandedState = false
+                    onTermSelected(eachOption)
             }) {
                         Text(text = eachOption, fontSize = 28.sp)
                     }
@@ -158,13 +165,15 @@ fun SearchTerm() {
             
 
             selectedTerm = dropdownMenu(termsList) { termName ->
-            selectedTerm = termName
+                refresh++
+                selectedTerm = termName
         }
             
 
             Button(
             onClick = {
                 if (selectedTerm != "" && selectedTerm != "Select a Term") {
+                    refresh++
                     val intent = Intent(context, TermActivity::class.java)
                     intent.putExtra("SELECTED_TERM", selectedTerm) // Passing the course name
                     context.startActivity(intent)
@@ -190,9 +199,10 @@ fun SearchTerm() {
 
                         if (termUUID != null && termUUID.isNotEmpty()) {
                             termViewModel.updateUserCurrentTerm(termUUID)
-                            Toast.makeText(context, "Default term set to $selectedTerm", Toast.LENGTH_LONG).show()
+                            refresh++
+                            Toast.makeText(context, "Current term set to $selectedTerm", Toast.LENGTH_LONG).show()
                         } else {
-                            Toast.makeText(context, "Unable to set default term. Please try again.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "Unable to set current term. Please try again.", Toast.LENGTH_LONG).show()
                         }
                         isFetchingUUID = false
                     }
@@ -203,7 +213,7 @@ fun SearchTerm() {
             modifier = Modifier.padding(8.dp),
             enabled = !isFetchingUUID
         ) {
-            Text("Save as Default Term")
+            Text("Save as current Term")
         }
 
 
@@ -231,6 +241,7 @@ fun SearchTerm() {
             Button(
                 onClick = {
                     if (newTerm != "") {
+                        refresh++
                         termViewModel.addTerm(newTerm)
                         newTerm = "" // Reset newTerm after adding
                     } else {

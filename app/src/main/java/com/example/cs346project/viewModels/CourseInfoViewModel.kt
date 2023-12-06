@@ -1,9 +1,6 @@
 package com.example.cs346project.viewModels
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.cs346project.APIService
 import com.example.cs346project.ClassScheduleData
@@ -12,18 +9,23 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
 class CourseInfoViewModel : ViewModel() {
 
     private var _courseInfo = mutableListOf<CourseInfoAPIData>()
-    var errorMessage: String by mutableStateOf("")
+    private val _errorMessage = MutableStateFlow<String>("")
+    val errorMessage = _errorMessage.asStateFlow()
+
     val courseInfo: MutableList<CourseInfoAPIData>
         get() = _courseInfo
 
     private var _classScheduleInfo = mutableListOf<ClassScheduleData>()
-    var apiErrorMessage: String by mutableStateOf("")
+    private val _apiErrorMessage = MutableStateFlow<String>("")
+    val apiErrorMessage = _apiErrorMessage.asStateFlow()
     var classScheduleInfo: MutableList<ClassScheduleData>
         get() = _classScheduleInfo
         set(value) {
@@ -40,7 +42,7 @@ class CourseInfoViewModel : ViewModel() {
             }
         } catch (e: Exception) {
             Log.e("API_REQUEST 1", "Error: ${e.message}")
-            errorMessage = e.message.toString()
+            _errorMessage.value = "Course not found"
         }
     }
 
@@ -59,7 +61,7 @@ class CourseInfoViewModel : ViewModel() {
             }
         } catch (e: Exception) {
             Log.e("API_REQUEST 2", "Error: ${e.message}")
-            apiErrorMessage = e.message.toString()
+            _apiErrorMessage.value = "Course schedule not found"
         }
     }
 

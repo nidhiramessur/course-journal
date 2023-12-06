@@ -22,11 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -64,149 +62,144 @@ fun CourseInfo(termName:String, courseName: String) {
 
     val viewModel: CourseManagementViewModel = viewModel()
     val courseInfoState = viewModel.courseInfoState.collectAsState()
-    var isLoading by remember { mutableStateOf(false) }
+    val errorMessage by viewModel.errorMessage.collectAsState()
 
     LaunchedEffect(key1 = termName, key2 = courseName) {
-        isLoading = true
         viewModel.fetchCourseInfo(termName, courseName)
-        isLoading = false
     }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .padding(horizontal = 20.dp, vertical = 50.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.Top
-    ){
-        val context = LocalContext.current
-        IconButton(
-            onClick = {
-                val intent = Intent(context, TermActivity::class.java)
-                val sourceActivity = intent.getStringExtra("SOURCE_ACTIVITY")
-                val backIntent = when (sourceActivity) {
-                    "CurrentTermActivity" -> Intent(context, CurrentTermActivity::class.java)
-                    "TermActivity" -> Intent(context, TermActivity::class.java)
-                    else -> Intent(context, CurrentTermActivity::class.java)
-                }
-                backIntent.putExtra("SELECTED_TERM", termName)
-                backIntent.putExtra("TERM_NAME", termName) // Passing the term name
-                backIntent.putExtra("COURSE_NAME", courseName) // Passing the course name
-                context.startActivity(backIntent)
-            },
-            modifier = Modifier.align(Alignment.Start)
-        ) {
-            Icon(imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = "Close")
-        }
-
-        // Display loading indicator if the call is in progress
-        if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.padding(16.dp))
-        }
-
-        val courseDBData = courseInfoState.value.firstOrNull()
-        Log.d("COURSE STATE", courseInfoState.value.toString())
-
-        if (courseDBData != null) {
-            Text(courseDBData.name,
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center)
-            Text(courseDBData.title,
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center)
-            if (courseDBData.requirements.isNotEmpty()) {
-                Text(courseDBData.requirements,
-                    fontSize = 20.sp,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center)
+    if (errorMessage.isNotEmpty()) {
+        Text(text = errorMessage, color = Color.Red)
+    } else {
+        Column(horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(horizontal = 20.dp, vertical = 50.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.Top
+        ){
+            val context = LocalContext.current
+            IconButton(
+                onClick = {
+                    val intent = Intent(context, TermActivity::class.java)
+                    val sourceActivity = intent.getStringExtra("SOURCE_ACTIVITY")
+                    val backIntent = when (sourceActivity) {
+                        "CurrentTermActivity" -> Intent(context, CurrentTermActivity::class.java)
+                        "TermActivity" -> Intent(context, TermActivity::class.java)
+                        else -> Intent(context, CurrentTermActivity::class.java)
+                    }
+                    backIntent.putExtra("SELECTED_TERM", termName)
+                    backIntent.putExtra("TERM_NAME", termName) // Passing the term name
+                    backIntent.putExtra("COURSE_NAME", courseName) // Passing the course name
+                    context.startActivity(backIntent)
+                },
+                modifier = Modifier.align(Alignment.Start)
+            ) {
+                Icon(imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = "Close")
             }
 
-            Text("Course Rating: ${courseDBData.courserating}/5",
-                fontSize = 17.sp,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center)
+            val courseDBData = courseInfoState.value.firstOrNull()
+            Log.d("COURSE STATE", courseInfoState.value.toString())
 
-            // **can add complexity -
-            // it displays the lecture times and days that the student attends
-            // can make student choose lecture day/time when adding a course...
+            if (courseDBData != null) {
 
-            if (courseDBData.lecturedatetime.isNotEmpty()) {
-                Text(text = "All lecture times:",
-                    fontSize = 20.sp,
+                Text(courseDBData.name,
+                    fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    textAlign = TextAlign.Center)
-                Text(courseDBData.lecturedatetime,
-                    fontSize = 20.sp,
-                    modifier = Modifier
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center)
-            }
-
-            if (courseDBData.lecturelocation.isNotEmpty()) {
-                Text("Lecture location: ${courseDBData.lecturelocation}",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center)
-            }
-
-            if (courseDBData.professorname.isNotEmpty()) {
-                Text("Instructor: ${courseDBData.professorname}",
+                Text(courseDBData.title,
                     fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp),
+                        .fillMaxWidth(),
                     textAlign = TextAlign.Center)
-                Text("Instructor Rating: ${courseDBData.professorrating}/5",
+                if (courseDBData.requirements.isNotEmpty()) {
+                    Text(courseDBData.requirements,
+                        fontSize = 20.sp,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center)
+                }
+
+                Text("Course Rating: ${courseDBData.courserating}/5",
                     fontSize = 17.sp,
                     modifier = Modifier
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center)
+
+                if (courseDBData.lecturedatetime.isNotEmpty()) {
+                    Text(text = "All lecture times:",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        textAlign = TextAlign.Center)
+                    Text(courseDBData.lecturedatetime,
+                        fontSize = 20.sp,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center)
+                }
+
+                if (courseDBData.lecturelocation.isNotEmpty()) {
+                    Text("Lecture location: ${courseDBData.lecturelocation}",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center)
+                }
+
+                if (courseDBData.professorname.isNotEmpty()) {
+                    Text("Instructor: ${courseDBData.professorname}",
+                        fontSize = 25.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp),
+                        textAlign = TextAlign.Center)
+                    Text("Instructor Rating: ${courseDBData.professorrating}/5",
+                        fontSize = 17.sp,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center)
+                }
+            } else {
+                CircularProgressIndicator()
             }
-        } else {
-            Text(text = "Error loading course")
-        }
 
-        Button(
-            onClick = {
-                val intent = Intent(context, ToDoListActivity::class.java)
-                intent.putExtra("SELECTED_TERM", termName)
-                intent.putExtra("TERM_NAME", termName) // Passing the term name
-                intent.putExtra("COURSE_NAME", courseName) // Passing the course name
-                context.startActivity(intent)
-                      },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 30.dp)
-        ) {
-            Text(" To-do list")
-        }
-        Button(
-            onClick = {
-                val intent = Intent(context, NotesActivity::class.java)
-                intent.putExtra("SELECTED_TERM", termName)
-                intent.putExtra("TERM_NAME", termName) // Passing the term name
-                intent.putExtra("COURSE_NAME", courseName) // Passing the course name
-                context.startActivity(intent)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Text("Notes")
-        }
+            Button(
+                onClick = {
+                    val intent = Intent(context, ToDoListActivity::class.java)
+                    intent.putExtra("SELECTED_TERM", termName)
+                    intent.putExtra("TERM_NAME", termName) // Passing the term name
+                    intent.putExtra("COURSE_NAME", courseName) // Passing the course name
+                    context.startActivity(intent)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 30.dp)
+            ) {
+                Text(" To-do list")
+            }
+            Button(
+                onClick = {
+                    val intent = Intent(context, NotesActivity::class.java)
+                    intent.putExtra("SELECTED_TERM", termName)
+                    intent.putExtra("TERM_NAME", termName) // Passing the term name
+                    intent.putExtra("COURSE_NAME", courseName) // Passing the course name
+                    context.startActivity(intent)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text("Notes")
+            }
 
+        }
     }
+
 }

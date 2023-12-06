@@ -20,10 +20,10 @@ class NotesViewModel : ViewModel() {
     private val _notesState = MutableStateFlow<List<Note>>(emptyList())
     val notesState = _notesState.asStateFlow()
 
-    suspend fun fetchCourseNotes(termUUID: String, CourseUUID: String) {
+    fun fetchCourseNotes(termUUID: String?, CourseUUID: String?) {
         viewModelScope.launch {
             val user = auth.currentUser
-            if (user != null) {
+            if (user != null && termUUID != null && CourseUUID !=null) {
                 val documents = db.collection("Users")
                     .document(user.uid)
                     .collection("Terms")
@@ -45,10 +45,10 @@ class NotesViewModel : ViewModel() {
         }
     }
 
-    fun addNote(termUUID: String, CourseUUID: String,note: String){
+    fun addNote(termUUID: String?, CourseUUID: String?,note: String){
         viewModelScope.launch {
             val user = auth.currentUser
-            if (user != null) {
+            if ((user != null && termUUID != null && CourseUUID !=null)) {
                 val notesUID = UUID.randomUUID().toString()
                 try {
                     val mynote = mapOf("data" to note, "nuid" to notesUID)
@@ -70,10 +70,10 @@ class NotesViewModel : ViewModel() {
         }
     }
 
-    fun updateNote(termUUID: String, CourseUUID: String,note: Note) {
+    fun updateNote(termUUID: String?, CourseUUID: String?,note: Note) {
         viewModelScope.launch {
             val user = auth.currentUser
-            if (user != null) {
+            if ((user != null && termUUID != null && CourseUUID !=null)) {
                 try {
                     db.collection("Users")
                         .document(user.uid)
@@ -92,10 +92,10 @@ class NotesViewModel : ViewModel() {
         }
     }
 
-    fun deleteNote(termUUID: String, CourseUUID: String,note: Note) {
+    fun deleteNote(termUUID: String?, CourseUUID: String?,note: Note) {
         viewModelScope.launch {
             val user = auth.currentUser
-            if (user != null) {
+            if ((user != null && termUUID != null && CourseUUID !=null)) {
                 try {
                     db.collection("Users")
                         .document(user.uid)

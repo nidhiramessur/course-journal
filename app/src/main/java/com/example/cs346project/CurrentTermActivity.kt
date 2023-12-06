@@ -27,9 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cs346project.viewModels.TermViewModel
 import com.example.cs346project.viewModels.NavigationViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import android.util.Log
 
 class CurrentTermActivity : BaseActivity() {
 
@@ -52,40 +49,22 @@ fun CurrentTermPage() {
     val termViewModel: TermViewModel = viewModel()
     val coursesState = termViewModel.coursesState.collectAsState()
     val context = LocalContext.current
-    val currentUser = FirebaseAuth.getInstance().currentUser
     var currentTermTitle by remember { mutableStateOf("Loading...") }
+    var refresh by remember { mutableStateOf(0) }
+    refresh++
 
-      LaunchedEffect(currentUser) {
-        currentUser?.let { user ->
-            FirebaseFirestore.getInstance().collection("Users").document(user.uid).get()
-                .addOnSuccessListener { document ->
-                    val termUUID = document.getString("currentTerm")
-                    Log.d("UUID", "Fetching term UUID: $termUUID")
-
-                    if (!termUUID.isNullOrEmpty()) {
-                        // Fetch the term title based on the UUID
-                        FirebaseFirestore.getInstance().collection("Users").document(user.uid)
-                            .collection("Terms").document(termUUID).get()
-                            .addOnSuccessListener { termDocument ->
-                                currentTermTitle = termDocument.getString("name") ?: "Term not found"
-                                // Fetch the courses for the current term
-                                termViewModel.fetchCoursesForTerm(termUUID)
-                            }
-                            .addOnFailureListener { e ->
-                                Log.w("Firestore", "Error fetching term name", e)
-                                currentTermTitle = "Term not found"
-                            }
-                    } else {
-                        currentTermTitle = "No current term set"
-                    }
+    LaunchedEffect(refresh) {
+        termViewModel.fetchCurrentTermUUID { termUUID ->
+            if (termUUID != "") {
+                termViewModel.fetchCoursesForTerm(termUUID)
+                termViewModel.fetchNamefromCurrentTermUUID(termUUID) { currentTermName ->
+                    currentTermTitle = currentTermName
                 }
-                .addOnFailureListener { e ->
-                    Log.w("Firestore", "Error fetching user's current term", e)
-                    currentTermTitle = "Term not found"
-                }
+            } else {
+                currentTermTitle = "No current term"
+            }
         }
     }
-
 
     Column(
         modifier = Modifier
@@ -120,14 +99,17 @@ fun CurrentTermPage() {
             }
         }
 
-        Button(
-            onClick = {
-                context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
-            },
-            modifier = Modifier
-                .padding(top = 30.dp)
-        ) {
-            Text("Add Course")
+        if (currentTermTitle != "No current term") {
+            Button(
+                onClick = {
+                    refresh++
+                    context.startActivity(Intent(context, CourseInfoDisplayActivity::class.java))
+                },
+                modifier = Modifier
+                    .padding(top = 30.dp)
+            ) {
+                Text("Add Course")
+            }
         }
     }
 }
@@ -147,7 +129,6 @@ fun ColumnItem(courseName: String, context: Context, termName: String) {
     ) {
         Button(
             onClick = {
-//                context.startActivity(Intent(context, CourseManagementActivity::class.java))
                 val intent = Intent(context, CourseManagementActivity::class.java)
                 intent.putExtra("TERM_NAME", termName) // Passing the term name
                 intent.putExtra("COURSE_NAME", courseName) // Passing the course name
