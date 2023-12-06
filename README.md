@@ -92,8 +92,8 @@ This guide provides detailed steps for installing and running the Course Journal
 
 ### Given Files
 
-1) APK file
-2) JAR file
+1) APK file (Link a download link the the APK **TODO** until final merge)
+2) JAR file  (Link a download link the the JAR **TODO** until final merge)
 
 ### Step 1. Running the Android App (Client Side)
 
@@ -101,7 +101,7 @@ In these steps you have the option to bundle the APK yourself by cloning the rep
 
 **Option A:** Download the given APK directly:
 
-1. Download the APK file as provided here.
+1. Download the APK file as provided.
 2. Open Android Studio and under `Device Manager` create/run a mobile device (Testing was done on the Pixel 3a)
 3. Once the device boots and is turned on, drag and drop the downloaded APK file directly into the emulator screen.
 4. The app should begin to download and appear with a default green Android icon. You can now open it and begin.
@@ -127,7 +127,7 @@ Once we have the app running, we need to host our webservice locally to be able 
 
 **Setting up the JAR file**
 
-The JAR file required to build this service can be either downloaded **here** or you can build it using 
+The JAR file required to build this service can be either downloaded in the given files or you can build it using 
 `./gradlew shadowJar` in the /ktor-346 directory. `
 
 **Note** If you are downloading it, place the file somewhere within
