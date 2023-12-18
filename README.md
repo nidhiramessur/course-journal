@@ -4,12 +4,11 @@
 The Course Journal application is a comprehensive platform for students to manage and access their course-related information. It helps students organize courses, view lecture details, and maintain notes and to-do lists.
 
 ## Team Members (Team mns346)
-- Maroosh Ahmad: m72ahmad@uwaterloo.ca
-- Nidhi Ramessur: nbramess@uwaterloo.ca
-- Sohom Saha: s52saha@uwaterloo.ca
+- Maroosh Ahmad
+- Nidhi Ramessur
+- Sohom Saha
 
 ## Table of Contents
-- [Meeting Minutes](#meeting-minutes)
 - [Requirements](#requirements)
 - [Design](#design)
 - [Discussion](#discussion)
@@ -18,12 +17,6 @@ The Course Journal application is a comprehensive platform for students to manag
 - [Screenshots/Videos](#screenshotsvideos)
 - [Project Documents](#project-documents)
 - [Software Releases](#software-releases)
-
-## Meeting Minutes
-- [Sprint 1](https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Meeting-minutes-Sprint-1)
-- [Sprint 2](https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Meeting-minutes-Sprint-2)
-- [Sprint 3](https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Meeting-minutes-Sprint-3)
-- [Sprint 4](https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Meeting-minutes-Sprint-4)
 
 ## Requirements
 
@@ -39,7 +32,7 @@ App should be user friendly and easy to understand, so students don't waste a lo
 learning how to use this application on top of all the other work they have.   
 A To Do list for each course would come in handy
 
-Keeping the scope of the project in mind some we implemented some of the suggestions as is outlined in the list below
+Keeping the scope of the project in mind, we implemented some of the suggestions as is outlined in the list below
 
 -Requirements
 The following features were completed as part of this project:
@@ -50,19 +43,13 @@ The following features were completed as part of this project:
 -Add a course  
 -Search for a course  
 -Display details for the course  
--Homepage view where user can search for all previous terms    added by them   
+-Homepage view where user can search for all previous terms added by them   
 -Note taking functionality for each course         
 -To Do list functionality for each course
 
 
 ## Design
-The design pattern we tried to adapt was Model-View-ViewModel, this was because after doing some 
-research we noticed that this is the most popular desig pattern used for Android Applications. Additionally, none of our team members had 
-used this before so we decided it would be a good idea to learn more about it. We decided to use firebase for authentication and firestore 
-for storing our data. This turned out to be a good decision as firebase handled authentication for us in a very nice manner. More over, 
-Firestore is a NoSQL document based database. Since none of us had used it before, it was initially hard to grasp how documents/collections are
-structured but towardds the end of the course we all became proficient in writing different complex queries using firestore. One technical decision we made during the initial stages was to add all the navigation at the end. This decision did not work in our favor
-as towards the end we had to make a lot of changes for the navigation to work as we wanted it to. 
+The design pattern we tried to adapt was Model-View-ViewModel, this was because after doing some research we noticed that this is the most popular design pattern used for Android Applications. We decided to use firebase for authentication and firestore for storing our data. This turned out to be a good decision as firebase handled authentication for us in a very nice manner. Moreover, Firestore is a NoSQL document based database. Since none of us had used it before, it was initially hard to grasp how documents/collections are structured but towardds the end of the course we all became proficient in writing different complex queries using firestore.
 
 **Webservice Design**
 
@@ -100,21 +87,6 @@ Once the Docker container is running, it listens at port 8080, when the client s
         |                       |                          |
 
 ```
-
-## Discussion
-Since our team had minimal exposure to kotlin & compose before starting the project we frequently referred to the Android Developer 
-documentation to understand best practices and learn more. This was also the first time we worked on a project of this nature from start to
-end therefore there were a lot of learnings. Weekly meetings, and meeting minutes really helped our team stay organized and focused. Moreover,
-pair programming helped us learn new coding techniques from each other. Pair programming also helped us catch flaws earlier in the 
-process which were then addressed accordingly.          
-A few things we would do differently when creating a project of this nature would be:           
--Complete more readings and watch more tutorials before starting to write code. This will ensure our code is more clean and we are
-adapting best practices from the start.       
--Add navigation as soon as a new screen is introduced.    
--Set up more time for pair programming as it is really helpful, especially when everyone is learning.     
--Make sure tasks assigned don't overlap during a sprint so two people are not modifying the same file for the same purpose, this results
-in a waste of overall group time and effort.     
--Add more tests
 
 ## Installation Details
 
@@ -201,11 +173,5 @@ docker run -d -p 8080:8080 --name my-ktor-container ktor-app
 ## Screenshots/Videos
 
 This is a google drive to the [screenshots](https://docs.google.com/document/d/1Cxab_93FqLL2An8Cf8DXTpiw1gUp9kG0qFYQiSkv9Zs/edit)
-
-
-## Project Documents
-[Rough wireframe diagram](https://git.uwaterloo.ca/m72ahmad/mns346/-/wikis/Rough-high-level-wireframe-diagram)
-
-## Software Releases
 
 
